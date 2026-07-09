@@ -1,0 +1,7 @@
+name: sales-purchase-journal-entry
+machineName: sales-purchase-journal-entry
+status: true
+required: []
+props:
+  properties: []
+slots: []

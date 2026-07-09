@@ -1,0 +1,21 @@
+uuid: a527ea11-f072-4c50-9cfb-269863b075c3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_customer_type
+    - node.type.customer
+  module:
+    - options
+id: node.customer.field_customer_type
+field_name: field_customer_type
+entity_type: node
+bundle: customer
+label: 'Customer type'
+description: 'Helps later for tax / reporting. Business or Individual'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

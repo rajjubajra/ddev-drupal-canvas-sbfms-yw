@@ -1,0 +1,22 @@
+uuid: 9a3b1bd7-c47f-4761-a20c-0a2511c706e6
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.component.block.system_menu_block.main
+  theme:
+    - drupal_cms_olivero
+id: drupal_cms_olivero.primary_menu
+region: primary_menu
+theme: drupal_cms_olivero
+component_tree:
+  -
+    uuid: 47540e7c-6826-48ec-a9bb-113866a57abf
+    component_id: block.system_menu_block.main
+    component_version: 023ff7ba63f80798
+    inputs:
+      label: 'Main navigation'
+      label_display: '0'
+      level: 1
+      depth: 2
+      expand_all_items: true

@@ -1,0 +1,7 @@
+name: acc-navigation
+machineName: acc-navigation
+status: true
+required: []
+props:
+  properties: []
+slots: []

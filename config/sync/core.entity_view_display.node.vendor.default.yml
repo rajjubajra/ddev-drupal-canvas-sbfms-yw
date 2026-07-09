@@ -1,0 +1,65 @@
+uuid: 8a8f7e41-d246-4837-a750-bb75c2f766c0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.vendor.field_address
+    - field.field.node.vendor.field_contact_person
+    - field.field.node.vendor.field_date
+    - field.field.node.vendor.field_email
+    - field.field.node.vendor.field_phone_number
+    - node.type.vendor
+  module:
+    - datetime
+    - text
+    - user
+id: node.vendor.default
+targetEntityType: node
+bundle: vendor
+mode: default
+content:
+  field_address:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 109
+    region: content
+  field_contact_person:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 108
+    region: content
+  field_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  field_email:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  field_phone_number:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 107
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

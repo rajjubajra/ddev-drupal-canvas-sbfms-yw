@@ -1,0 +1,49 @@
+id: journal_entry_import
+label: Import Journal Entries
+migration_group: default
+
+source:
+  plugin: csv
+  path: 'public://journal.csv'
+  header_row_count: 1
+  ids:
+    - title
+
+process:
+
+  title: title
+
+  field_date:
+    plugin: format_date
+    from_format: 'Y-m-d'
+    to_format: 'Y-m-d'
+    source: date
+
+  field_amount: amount
+  field_description: description
+  field_comment: comment
+  field_purchase_sale_reference_id: reference_id
+
+  # ✅ Debit Account
+  field_debit_account:
+    plugin: entity_lookup
+    source: debit_account
+    value_key: title
+    entity_type: node
+    bundle_key: type
+    bundle: acc_accounting_ledger
+
+  # ✅ Credit Account
+  field_credit_account:
+    plugin: entity_lookup
+    source: credit_account
+    value_key: title
+    entity_type: node
+    bundle_key: type
+    bundle: acc_accounting_ledger
+
+destination:
+  plugin: entity:node
+  default_bundle: acc_journal_entry
+
+migration_dependencies: { }

@@ -1,0 +1,29 @@
+uuid: c64ce52d-7e1a-4534-b7d1-40e63873d84d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_product_size
+    - node.type.purchase_book
+    - taxonomy.vocabulary.product_size
+id: node.purchase_book.field_product_size
+field_name: field_product_size
+entity_type: node
+bundle: purchase_book
+label: 'Product Size'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      product_size: product_size
+    sort:
+      field: name
+      direction: asc
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference

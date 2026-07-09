@@ -1,0 +1,18 @@
+uuid: d60edb61-617c-4e2c-90bf-87556de4ea30
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.js_component.copy-acc-list-journal-by-date-range
+active_version: 8fe3be948e0194e1
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions: {  }
+    fallback_metadata:
+      slot_definitions: {  }
+label: copy-acc-list-journal-by-date-range
+id: js.copy-acc-list-journal-by-date-range
+provider: null
+source: js
+source_local_id: copy-acc-list-journal-by-date-range

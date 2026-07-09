@@ -1,0 +1,7 @@
+name: csv-importer
+machineName: csv-importer
+status: true
+required: []
+props:
+  properties: []
+slots: []

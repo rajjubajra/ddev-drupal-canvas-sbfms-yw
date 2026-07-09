@@ -1,0 +1,7 @@
+name: sales-invoice-form
+machineName: sales-invoice-form
+status: false
+required: []
+props:
+  properties: []
+slots: []

@@ -1,0 +1,29 @@
+uuid: 98af6c09-e89d-4ee6-8ab3-e2cdd2c4110f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_product_id
+    - paragraphs.paragraphs_type.sales_invoice_items
+    - taxonomy.vocabulary.product_name
+id: paragraph.sales_invoice_items.field_product_id
+field_name: field_product_id
+entity_type: paragraph
+bundle: sales_invoice_items
+label: 'product id'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      product_name: product_name
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

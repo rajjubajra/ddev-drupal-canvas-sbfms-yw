@@ -1,0 +1,31 @@
+<?php
+
+
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function my_module_entity_operation_alter(array &$operations, EntityInterface $entity) {
+
+  // Apply only to Sales Invoice nodes.
+  if ($entity->getEntityTypeId() === 'node' && $entity->bundle() === 'sales_invoice') {
+
+    // Remove Delete operation.
+    unset($operations['delete']);
+
+    // Remove Duplicate (Clone) if present.
+    unset($operations['clone']);
+    unset($operations['duplicate']);
+
+    // Add Cancel operation.
+    $operations['cancel'] = [
+      'title' => t('Cancel'),
+      'weight' => 50,
+      'url' => \Drupal\Core\Url::fromRoute(
+        'entity.node.canonical',
+        ['node' => $entity->id()]
+      ),
+    ];
+  }
+}

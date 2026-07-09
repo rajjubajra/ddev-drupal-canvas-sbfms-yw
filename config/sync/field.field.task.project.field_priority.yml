@@ -1,0 +1,29 @@
+uuid: aa740776-1eee-40ad-8fb3-66de1635bc9c
+langcode: en
+status: true
+dependencies:
+  config:
+    - eck.eck_type.task.project
+    - field.storage.task.field_priority
+    - taxonomy.vocabulary.task_priority
+id: task.project.field_priority
+field_name: field_priority
+entity_type: task
+bundle: project
+label: Priority
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      task_priority: task_priority
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

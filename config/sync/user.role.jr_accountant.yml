@@ -1,0 +1,26 @@
+uuid: 239e9544-92b7-4c2b-9fb1-651d7c42fe6a
+langcode: en
+status: true
+dependencies:
+  config:
+    - media.type.remote_video
+    - node.type.acc_journal_entry
+    - node.type.financial_year
+  module:
+    - media
+    - node
+    - system
+id: jr_accountant
+label: 'Jr Accountant'
+weight: -8
+is_admin: false
+permissions:
+  - 'access content'
+  - 'create acc_journal_entry content'
+  - 'create remote_video media'
+  - 'delete own acc_journal_entry content'
+  - 'edit any financial_year content'
+  - 'edit own acc_journal_entry content'
+  - 'edit own financial_year content'
+  - 'view acc_journal_entry revisions'
+  - 'view all media revisions'

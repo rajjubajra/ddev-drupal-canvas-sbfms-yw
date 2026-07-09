@@ -1,0 +1,19 @@
+uuid: 14789679-8306-49d1-a773-5e099f739b86
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_product_id
+    - node.type.invoice_items
+id: node.invoice_items.field_product_id
+field_name: field_product_id
+entity_type: node
+bundle: invoice_items
+label: 'Product Id'
+description: 'Product Id from Purchase Book'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

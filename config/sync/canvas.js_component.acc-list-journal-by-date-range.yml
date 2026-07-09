@@ -1,0 +1,745 @@
+uuid: 14191cda-1401-48ad-8590-8943bc62a458
+langcode: en
+status: false
+dependencies:
+  enforced:
+    config:
+      - canvas.js_component.utl-button
+      - canvas.js_component.utl-page-title
+      - canvas.js_component.utl-amount
+machineName: acc-list-journal-by-date-range
+name: acc-list-journal-by-date-range
+required: {  }
+props: {  }
+slots: {  }
+js:
+  original: |
+    import { useState, useEffect } from 'react';
+    import useSWR from 'swr';
+
+    import { JsonApiClient, FormattedText, Image } from 'drupal-canvas';
+
+    import { DrupalJsonApiParams } from 'drupal-jsonapi-params';
+
+    import Button from '@/components/utl-button';
+    import PageTitle from '@/components/utl-page-title';
+    import Amount from '@/components/utl-amount';
+
+    /* --------------------------------------------------
+       Drupal JSON:API Client
+    -------------------------------------------------- */
+    const client = new JsonApiClient();
+
+
+
+
+    export default function JournalEntriesList() {
+
+      
+      /* --------------------------------------------------
+         State: Date Filters (default = defined fiscal year)
+      -------------------------------------------------- */
+
+      const [datePickedFrom, setDatePickedFrom] = useState('');
+      const [datePickedTo, setDatePickedTo] = useState('');
+      
+      const [dateFrom, setDateFrom] = useState('');
+      const [dateTo, setDateTo] = useState('');
+
+
+          /* --------------------------------------------------
+               Fetch: Financial Year
+            -------------------------------------------------- */
+            const { data:fy, error:fyError, isLoading:fyIsLoading } = useSWR(
+              [
+                'node--financial_year',
+                {
+                  queryString: new DrupalJsonApiParams()
+                    .addSort(['-created'])
+                    .getQueryString(),
+                },
+              ],
+              ([type, options]) => client.getCollection(type, options)
+            );
+          
+            
+          
+            useEffect(() => {
+              if (!fy || fy.length === 0) return;
+            
+              if (
+                (!datePickedFrom || datePickedFrom === '') &&
+                (!datePickedTo || datePickedTo === '')
+              ) {
+                setDateFrom(fy[0].field_date_from);
+                setDateTo(fy[0].field_date_to);
+              } else {
+                setDateFrom(datePickedFrom);
+                setDateTo(datePickedTo);
+              }
+            }, [fy, datePickedFrom, datePickedTo]);
+
+
+
+       /**--------------------------------------- 
+                PAGENATION 
+          -------------------------------------------**/
+            
+            const [page, setPage] = useState(0);
+            const [itemPerPage, setItemPerPage] = useState(10)
+            const ITEMS_PER_PAGE = itemPerPage;
+            const offset = page * ITEMS_PER_PAGE;
+          
+
+              useEffect(() => {
+                console.log('PAGE CHANGED:', page, 'OFFSET:', offset);
+              }, [page, offset]);
+
+      
+
+
+
+      /* --------------------------------------------------
+         Fetch: Journal Entries
+      -------------------------------------------------- */
+
+        const params = new DrupalJsonApiParams()
+            .addInclude([
+              'field_debit_entry.field_ledger_account_name',
+              'field_credit_entry.field_ledger_account_name',
+              'field_image_image.field_media_image',
+            ])
+            .addFilter('field_date', dateFrom, '>=')
+            .addFilter('field_date', dateTo, '<=')
+            .addSort(['-field_date'])
+            .addPageLimit(ITEMS_PER_PAGE)
+            .addPageOffset(offset);
+
+          const { data, error, isLoading } = useSWR(
+            (!dateFrom || !dateTo)
+              ? null // ⛔ don’t fetch until ready
+              : [
+                  'node--journal_entry',
+                  dateFrom,
+                  dateTo,
+                  page,
+                  {
+                    queryString: params.getQueryString(),
+                  },
+                ],
+            ([type, , , , options]) =>
+              client.getCollection(type, options)
+          );
+
+
+        /* --------------------------------------------------
+               Journal only for Total Number of pages
+            -------------------------------------------------- */
+            const { data:jrTotal, error:jrTotalError, isLoading:jrTotalIsLoading } = useSWR(
+              [
+                'node--journal_entry',
+                {
+                  queryString: new DrupalJsonApiParams()
+                    .getQueryString(),
+                },
+              ],
+              ([type, options]) => client.getCollection(type, options)
+            );
+          
+            
+       //console.log('jr total', jrTotal && jrTotal.length)
+
+
+
+
+    /**-----------------------------------------------------------
+     * EXPORT TO CSV
+     --------------------------------------------------------------*/
+
+     const exportJournalCSV = () => {
+
+              const headers = [
+                "Date",
+                "Title",
+                "Description",
+                "Comment",
+                "Debit Account",
+                "Debit Amount",
+                "Credit Account",
+                "Credit Amount"
+              ];
+
+              const rows = data?.map((entry) => [
+                entry.field_date,
+                entry.title,
+                entry?.field_description?.processed?.replace(/<[^>]+>/g, ""), // remove HTML
+                entry?.field_comment || "",
+                entry?.field_debit_entry?.field_ledger_account_name?.field_ledger_account_name,
+                entry?.field_debit_entry?.field_debit_amount,
+                entry?.field_credit_entry?.field_ledger_account_name?.field_ledger_account_name,
+                entry?.field_credit_entry?.field_credit_amount
+              ]);
+
+              const csvContent =
+                "data:text/csv;charset=utf-8," +
+                [headers, ...rows]
+                  .map((row) => row.map((item) => `"${item ?? ""}"`).join(","))
+                  .join("\n");
+
+              const encodedUri = encodeURI(csvContent);
+
+              const link = document.createElement("a");
+              link.setAttribute("href", encodedUri);
+              link.setAttribute("download", "journal_entries.csv");
+              document.body.appendChild(link);
+
+              link.click();
+              document.body.removeChild(link);
+            };
+
+
+      
+         
+
+      
+        
+      /* --------------------------------------------------
+         Render States
+      -------------------------------------------------- */
+
+        {isLoading && (
+          <div className="py-4 text-sm text-gray-500">
+            Loading journal entries…
+          </div>
+        )}
+
+      if (error) return 'An error has occurred.';
+
+
+      /* --------------------------------------------------
+         Render UI
+      -------------------------------------------------- */
+      return (
+        <div>
+          <PageTitle title="Journal Entries" />
+          
+    {/**
+     * BUTTONS - CREATE NEW ENTRY, DISPLAY ITEM NUMBERS, CSV EXPORT
+     */}
+          {/* Actions */}
+          <div className="w-full flex justify-end mb-4">
+            <a href="/node/add/journal_entry">
+              <Button>Create Journal Entry</Button>
+            </a>
+            <div className='mx-2 relative top-4'>
+              Items Per page:
+              <input 
+                className='w-24 ml-4 border p-2' 
+                type='number' 
+                value={itemPerPage} 
+                onChange={(e) => setItemPerPage(e.target.value)} />
+            </div>
+            <div>
+              <button 
+              onClick={exportJournalCSV}>
+                <Button>Export CSV</Button>
+              </button>
+            </div>
+          </div>
+
+
+
+          {/*--------------------------------------------------- 
+          Date Filter Form 
+          ------------------------------------------------------*/}
+          <form
+            className="flex flex-wrap gap-4 items-end mb-6 p-4 border rounded"
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Date From
+              </label>
+              <input
+                type="date"
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+                className="border px-2 py-1 rounded"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Date To
+              </label>
+              <input
+                type="date"
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+                className="border px-2 py-1 rounded"
+              />
+            </div>
+          </form>
+
+          {/* Journal Entry List */}
+          { data?.map((entry) => (
+            <div
+              key={entry.id}
+              className="my-2 py-4 border-b-2 border-slate-500">
+              
+              <div className='flex justify-between'>
+                <div>Date: {entry.field_date}</div>
+                <div className='flex gap-2'>
+                  <a href={`/node/${entry.drupal_internal__nid}/edit?destination=/admin/content`}><Button>Edit</Button></a>
+                  
+                </div>
+              </div>
+
+              <div className="my-2 mx-4 border-l border-slate-400 pl-4">
+                <div className="mt-2 text-xs font-bold uppercase">
+                  Description
+                </div>
+                <FormattedText>
+                  {entry?.field_description?.processed}
+                </FormattedText>
+              </div>
+
+              <div className="my-2 mx-4 border-l border-slate-400 pl-4">
+                <div className="mt-2 text-xs font-bold uppercase">
+                  Comment
+                </div>
+                <FormattedText>{entry.field_comment}</FormattedText>
+              </div>
+
+              <div>{entry.title}</div>
+
+              <div className="flex flex-wrap md:justify-between my-4">
+                {/* Debit */}
+                <div>
+                  <div className="font-semibold">Debit</div>
+                  <div className="mx-4 pl-4 border-l border-slate-400">
+                    <div>
+                      {
+                        entry.field_debit_entry
+                          .field_ledger_account_name
+                          .field_ledger_account_name
+                      }
+                    </div>
+                    <Amount
+                      amt={entry.field_debit_entry.field_debit_amount}
+                    />
+                  </div>
+                </div>
+
+                {/* Credit */}
+                <div>
+                  <div className="font-semibold">Credit</div>
+                  <div className="mx-4 pl-4 border-l border-slate-400">
+                    <div>
+                      {
+                        entry.field_credit_entry
+                          .field_ledger_account_name
+                          .field_ledger_account_name
+                      }
+                    </div>
+                    <Amount
+                      amt={entry.field_credit_entry.field_credit_amount}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className='flex'>
+                { entry?.field_image_image &&
+                  entry?.field_image_image?.map((img) => 
+                <a href={img?.field_media_image?.uri?.url} target='_blank'>
+                  <Image
+                   className='w-64 h-auto p-2 m-2 border border-slate-300'
+                   src={img?.field_media_image?.uri?.url}
+                   alt='supporting image' 
+                   width={1000}
+                   height={500}
+                   unoptimized />
+                </a>
+                )
+                }
+              </div>
+            </div>
+          ))}
+
+
+          
+          {/* Pagination */}
+             <div className="flex justify-between items-center mt-6">
+               <div disabled={page === 0}
+                  onClick={() => setPage((p) => Math.max(p - 1, 0))}> 
+                 { page !== 0 && <Button>← Previous</Button>}
+               </div>
+              
+                <div className="text-sm font-semibold">
+                  Page {page + 1}
+                </div>
+
+               
+                <div onClick={() => setPage((p) => p + 1)}>
+                  { data && data.length !== 0 &&<Button>Next →</Button>}
+                </div>
+                
+
+              </div>
+
+        </div>
+      );
+    }
+  compiled: |
+    import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+    import { useState, useEffect } from 'react';
+    import useSWR from 'swr';
+    import { JsonApiClient, FormattedText, Image } from 'drupal-canvas';
+    import { DrupalJsonApiParams } from 'drupal-jsonapi-params';
+    import Button from '@/components/utl-button';
+    import PageTitle from '@/components/utl-page-title';
+    import Amount from '@/components/utl-amount';
+    /* --------------------------------------------------
+       Drupal JSON:API Client
+    -------------------------------------------------- */ const client = new JsonApiClient();
+    export default function JournalEntriesList() {
+        /* --------------------------------------------------
+         State: Date Filters (default = defined fiscal year)
+      -------------------------------------------------- */ const [datePickedFrom, setDatePickedFrom] = useState('');
+        const [datePickedTo, setDatePickedTo] = useState('');
+        const [dateFrom, setDateFrom] = useState('');
+        const [dateTo, setDateTo] = useState('');
+        /* --------------------------------------------------
+               Fetch: Financial Year
+            -------------------------------------------------- */ const { data: fy, error: fyError, isLoading: fyIsLoading } = useSWR([
+            'node--financial_year',
+            {
+                queryString: new DrupalJsonApiParams().addSort([
+                    '-created'
+                ]).getQueryString()
+            }
+        ], ([type, options])=>client.getCollection(type, options));
+        useEffect(()=>{
+            if (!fy || fy.length === 0) return;
+            if ((!datePickedFrom || datePickedFrom === '') && (!datePickedTo || datePickedTo === '')) {
+                setDateFrom(fy[0].field_date_from);
+                setDateTo(fy[0].field_date_to);
+            } else {
+                setDateFrom(datePickedFrom);
+                setDateTo(datePickedTo);
+            }
+        }, [
+            fy,
+            datePickedFrom,
+            datePickedTo
+        ]);
+        /**--------------------------------------- 
+                PAGENATION 
+          -------------------------------------------**/ const [page, setPage] = useState(0);
+        const [itemPerPage, setItemPerPage] = useState(10);
+        const ITEMS_PER_PAGE = itemPerPage;
+        const offset = page * ITEMS_PER_PAGE;
+        useEffect(()=>{
+            console.log('PAGE CHANGED:', page, 'OFFSET:', offset);
+        }, [
+            page,
+            offset
+        ]);
+        /* --------------------------------------------------
+         Fetch: Journal Entries
+      -------------------------------------------------- */ const params = new DrupalJsonApiParams().addInclude([
+            'field_debit_entry.field_ledger_account_name',
+            'field_credit_entry.field_ledger_account_name',
+            'field_image_image.field_media_image'
+        ]).addFilter('field_date', dateFrom, '>=').addFilter('field_date', dateTo, '<=').addSort([
+            '-field_date'
+        ]).addPageLimit(ITEMS_PER_PAGE).addPageOffset(offset);
+        const { data, error, isLoading } = useSWR(!dateFrom || !dateTo ? null // ⛔ don’t fetch until ready
+         : [
+            'node--journal_entry',
+            dateFrom,
+            dateTo,
+            page,
+            {
+                queryString: params.getQueryString()
+            }
+        ], ([type, , , , options])=>client.getCollection(type, options));
+        /* --------------------------------------------------
+               Journal only for Total Number of pages
+            -------------------------------------------------- */ const { data: jrTotal, error: jrTotalError, isLoading: jrTotalIsLoading } = useSWR([
+            'node--journal_entry',
+            {
+                queryString: new DrupalJsonApiParams().getQueryString()
+            }
+        ], ([type, options])=>client.getCollection(type, options));
+        //console.log('jr total', jrTotal && jrTotal.length)
+        /**-----------------------------------------------------------
+     * EXPORT TO CSV
+     --------------------------------------------------------------*/ const exportJournalCSV = ()=>{
+            const headers = [
+                "Date",
+                "Title",
+                "Description",
+                "Comment",
+                "Debit Account",
+                "Debit Amount",
+                "Credit Account",
+                "Credit Amount"
+            ];
+            const rows = data === null || data === void 0 ? void 0 : data.map((entry)=>{
+                var _entry_field_description_processed, _entry_field_description, _entry_field_debit_entry_field_ledger_account_name, _entry_field_debit_entry, _entry_field_debit_entry1, _entry_field_credit_entry_field_ledger_account_name, _entry_field_credit_entry, _entry_field_credit_entry1;
+                return [
+                    entry.field_date,
+                    entry.title,
+                    entry === null || entry === void 0 ? void 0 : (_entry_field_description = entry.field_description) === null || _entry_field_description === void 0 ? void 0 : (_entry_field_description_processed = _entry_field_description.processed) === null || _entry_field_description_processed === void 0 ? void 0 : _entry_field_description_processed.replace(/<[^>]+>/g, ""),
+                    (entry === null || entry === void 0 ? void 0 : entry.field_comment) || "",
+                    entry === null || entry === void 0 ? void 0 : (_entry_field_debit_entry = entry.field_debit_entry) === null || _entry_field_debit_entry === void 0 ? void 0 : (_entry_field_debit_entry_field_ledger_account_name = _entry_field_debit_entry.field_ledger_account_name) === null || _entry_field_debit_entry_field_ledger_account_name === void 0 ? void 0 : _entry_field_debit_entry_field_ledger_account_name.field_ledger_account_name,
+                    entry === null || entry === void 0 ? void 0 : (_entry_field_debit_entry1 = entry.field_debit_entry) === null || _entry_field_debit_entry1 === void 0 ? void 0 : _entry_field_debit_entry1.field_debit_amount,
+                    entry === null || entry === void 0 ? void 0 : (_entry_field_credit_entry = entry.field_credit_entry) === null || _entry_field_credit_entry === void 0 ? void 0 : (_entry_field_credit_entry_field_ledger_account_name = _entry_field_credit_entry.field_ledger_account_name) === null || _entry_field_credit_entry_field_ledger_account_name === void 0 ? void 0 : _entry_field_credit_entry_field_ledger_account_name.field_ledger_account_name,
+                    entry === null || entry === void 0 ? void 0 : (_entry_field_credit_entry1 = entry.field_credit_entry) === null || _entry_field_credit_entry1 === void 0 ? void 0 : _entry_field_credit_entry1.field_credit_amount
+                ];
+            });
+            const csvContent = "data:text/csv;charset=utf-8," + [
+                headers,
+                ...rows
+            ].map((row)=>row.map((item)=>`"${item !== null && item !== void 0 ? item : ""}"`).join(",")).join("\n");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "journal_entries.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+        /* --------------------------------------------------
+         Render States
+      -------------------------------------------------- */ {
+            isLoading && /*#__PURE__*/ _jsx("div", {
+                className: "py-4 text-sm text-gray-500",
+                children: "Loading journal entries…"
+            });
+        }
+        if (error) return 'An error has occurred.';
+        /* --------------------------------------------------
+         Render UI
+      -------------------------------------------------- */ return /*#__PURE__*/ _jsxs("div", {
+            children: [
+                /*#__PURE__*/ _jsx(PageTitle, {
+                    title: "Journal Entries"
+                }),
+                /*#__PURE__*/ _jsxs("div", {
+                    className: "w-full flex justify-end mb-4",
+                    children: [
+                        /*#__PURE__*/ _jsx("a", {
+                            href: "/node/add/journal_entry",
+                            children: /*#__PURE__*/ _jsx(Button, {
+                                children: "Create Journal Entry"
+                            })
+                        }),
+                        /*#__PURE__*/ _jsxs("div", {
+                            className: "mx-2 relative top-4",
+                            children: [
+                                "Items Per page:",
+                                /*#__PURE__*/ _jsx("input", {
+                                    className: "w-24 ml-4 border p-2",
+                                    type: "number",
+                                    value: itemPerPage,
+                                    onChange: (e)=>setItemPerPage(e.target.value)
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsx("div", {
+                            children: /*#__PURE__*/ _jsx("button", {
+                                onClick: exportJournalCSV,
+                                children: /*#__PURE__*/ _jsx(Button, {
+                                    children: "Export CSV"
+                                })
+                            })
+                        })
+                    ]
+                }),
+                /*#__PURE__*/ _jsxs("form", {
+                    className: "flex flex-wrap gap-4 items-end mb-6 p-4 border rounded",
+                    onSubmit: (e)=>e.preventDefault(),
+                    children: [
+                        /*#__PURE__*/ _jsxs("div", {
+                            children: [
+                                /*#__PURE__*/ _jsx("label", {
+                                    className: "block text-sm font-semibold mb-1",
+                                    children: "Date From"
+                                }),
+                                /*#__PURE__*/ _jsx("input", {
+                                    type: "date",
+                                    value: dateFrom,
+                                    onChange: (e)=>setDateFrom(e.target.value),
+                                    className: "border px-2 py-1 rounded"
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsxs("div", {
+                            children: [
+                                /*#__PURE__*/ _jsx("label", {
+                                    className: "block text-sm font-semibold mb-1",
+                                    children: "Date To"
+                                }),
+                                /*#__PURE__*/ _jsx("input", {
+                                    type: "date",
+                                    value: dateTo,
+                                    onChange: (e)=>setDateTo(e.target.value),
+                                    className: "border px-2 py-1 rounded"
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                data === null || data === void 0 ? void 0 : data.map((entry)=>{
+                    var _entry_field_description, _entry_field_image_image;
+                    return /*#__PURE__*/ _jsxs("div", {
+                        className: "my-2 py-4 border-b-2 border-slate-500",
+                        children: [
+                            /*#__PURE__*/ _jsxs("div", {
+                                className: "flex justify-between",
+                                children: [
+                                    /*#__PURE__*/ _jsxs("div", {
+                                        children: [
+                                            "Date: ",
+                                            entry.field_date
+                                        ]
+                                    }),
+                                    /*#__PURE__*/ _jsx("div", {
+                                        className: "flex gap-2",
+                                        children: /*#__PURE__*/ _jsx("a", {
+                                            href: `/node/${entry.drupal_internal__nid}/edit?destination=/admin/content`,
+                                            children: /*#__PURE__*/ _jsx(Button, {
+                                                children: "Edit"
+                                            })
+                                        })
+                                    })
+                                ]
+                            }),
+                            /*#__PURE__*/ _jsxs("div", {
+                                className: "my-2 mx-4 border-l border-slate-400 pl-4",
+                                children: [
+                                    /*#__PURE__*/ _jsx("div", {
+                                        className: "mt-2 text-xs font-bold uppercase",
+                                        children: "Description"
+                                    }),
+                                    /*#__PURE__*/ _jsx(FormattedText, {
+                                        children: entry === null || entry === void 0 ? void 0 : (_entry_field_description = entry.field_description) === null || _entry_field_description === void 0 ? void 0 : _entry_field_description.processed
+                                    })
+                                ]
+                            }),
+                            /*#__PURE__*/ _jsxs("div", {
+                                className: "my-2 mx-4 border-l border-slate-400 pl-4",
+                                children: [
+                                    /*#__PURE__*/ _jsx("div", {
+                                        className: "mt-2 text-xs font-bold uppercase",
+                                        children: "Comment"
+                                    }),
+                                    /*#__PURE__*/ _jsx(FormattedText, {
+                                        children: entry.field_comment
+                                    })
+                                ]
+                            }),
+                            /*#__PURE__*/ _jsx("div", {
+                                children: entry.title
+                            }),
+                            /*#__PURE__*/ _jsxs("div", {
+                                className: "flex flex-wrap md:justify-between my-4",
+                                children: [
+                                    /*#__PURE__*/ _jsxs("div", {
+                                        children: [
+                                            /*#__PURE__*/ _jsx("div", {
+                                                className: "font-semibold",
+                                                children: "Debit"
+                                            }),
+                                            /*#__PURE__*/ _jsxs("div", {
+                                                className: "mx-4 pl-4 border-l border-slate-400",
+                                                children: [
+                                                    /*#__PURE__*/ _jsx("div", {
+                                                        children: entry.field_debit_entry.field_ledger_account_name.field_ledger_account_name
+                                                    }),
+                                                    /*#__PURE__*/ _jsx(Amount, {
+                                                        amt: entry.field_debit_entry.field_debit_amount
+                                                    })
+                                                ]
+                                            })
+                                        ]
+                                    }),
+                                    /*#__PURE__*/ _jsxs("div", {
+                                        children: [
+                                            /*#__PURE__*/ _jsx("div", {
+                                                className: "font-semibold",
+                                                children: "Credit"
+                                            }),
+                                            /*#__PURE__*/ _jsxs("div", {
+                                                className: "mx-4 pl-4 border-l border-slate-400",
+                                                children: [
+                                                    /*#__PURE__*/ _jsx("div", {
+                                                        children: entry.field_credit_entry.field_ledger_account_name.field_ledger_account_name
+                                                    }),
+                                                    /*#__PURE__*/ _jsx(Amount, {
+                                                        amt: entry.field_credit_entry.field_credit_amount
+                                                    })
+                                                ]
+                                            })
+                                        ]
+                                    })
+                                ]
+                            }),
+                            /*#__PURE__*/ _jsx("div", {
+                                className: "flex",
+                                children: (entry === null || entry === void 0 ? void 0 : entry.field_image_image) && (entry === null || entry === void 0 ? void 0 : (_entry_field_image_image = entry.field_image_image) === null || _entry_field_image_image === void 0 ? void 0 : _entry_field_image_image.map((img)=>{
+                                    var _img_field_media_image_uri, _img_field_media_image, _img_field_media_image_uri1, _img_field_media_image1;
+                                    return /*#__PURE__*/ _jsx("a", {
+                                        href: img === null || img === void 0 ? void 0 : (_img_field_media_image = img.field_media_image) === null || _img_field_media_image === void 0 ? void 0 : (_img_field_media_image_uri = _img_field_media_image.uri) === null || _img_field_media_image_uri === void 0 ? void 0 : _img_field_media_image_uri.url,
+                                        target: "_blank",
+                                        children: /*#__PURE__*/ _jsx(Image, {
+                                            className: "w-64 h-auto p-2 m-2 border border-slate-300",
+                                            src: img === null || img === void 0 ? void 0 : (_img_field_media_image1 = img.field_media_image) === null || _img_field_media_image1 === void 0 ? void 0 : (_img_field_media_image_uri1 = _img_field_media_image1.uri) === null || _img_field_media_image_uri1 === void 0 ? void 0 : _img_field_media_image_uri1.url,
+                                            alt: "supporting image",
+                                            width: 1000,
+                                            height: 500,
+                                            unoptimized: true
+                                        })
+                                    });
+                                }))
+                            })
+                        ]
+                    }, entry.id);
+                }),
+                /*#__PURE__*/ _jsxs("div", {
+                    className: "flex justify-between items-center mt-6",
+                    children: [
+                        /*#__PURE__*/ _jsx("div", {
+                            disabled: page === 0,
+                            onClick: ()=>setPage((p)=>Math.max(p - 1, 0)),
+                            children: page !== 0 && /*#__PURE__*/ _jsx(Button, {
+                                children: "← Previous"
+                            })
+                        }),
+                        /*#__PURE__*/ _jsxs("div", {
+                            className: "text-sm font-semibold",
+                            children: [
+                                "Page ",
+                                page + 1
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsx("div", {
+                            onClick: ()=>setPage((p)=>p + 1),
+                            children: data && data.length !== 0 && /*#__PURE__*/ _jsx(Button, {
+                                children: "Next →"
+                            })
+                        })
+                    ]
+                })
+            ]
+        });
+    }
+css:
+  original: ''
+  compiled: ''
+dataDependencies:
+  drupalSettings:
+    - v0.baseUrl
+    - v0.jsonapiSettings

@@ -1,0 +1,29 @@
+uuid: 75ab0a77-af4a-4320-b617-cfbed3d37962
+langcode: en
+status: true
+dependencies:
+  module:
+    - scheduler
+    - taxonomy_unique
+third_party_settings:
+  scheduler:
+    expand_fieldset: when_required
+    fields_display_mode: vertical_tab
+    publish_enable: false
+    publish_past_date: error
+    publish_past_date_created: false
+    publish_required: false
+    publish_revision: false
+    publish_touch: false
+    show_message_after_update: true
+    unpublish_enable: false
+    unpublish_required: false
+    unpublish_revision: false
+  taxonomy_unique:
+    enabled: false
+    message: 'Term "%term" already exists in vocabulary "%vocabulary".'
+name: 'Sales - Product Name'
+vid: product_name
+description: 'Name of the Product'
+weight: 0
+new_revision: false

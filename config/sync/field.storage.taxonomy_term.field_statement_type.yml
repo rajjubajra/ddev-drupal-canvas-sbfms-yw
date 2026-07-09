@@ -1,0 +1,27 @@
+uuid: 4c1d0c9b-b268-446b-8fd7-c3bab93d1c0f
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+    - taxonomy
+id: taxonomy_term.field_statement_type
+field_name: field_statement_type
+entity_type: taxonomy_term
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: income_statement
+      label: 'Income Statement'
+    -
+      value: balance_sheet
+      label: balance_sheet
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

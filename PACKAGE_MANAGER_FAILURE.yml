@@ -1,0 +1,7 @@
+stage_class: Drupal\automatic_updates\UpdateSandboxManager
+stage_type: 'automatic_updates:attended'
+stage_file: /var/www/html/web/modules/contrib/automatic_updates/src/UpdateSandboxManager.php
+message: 'Automatic updates failed to apply, and the site is in an indeterminate state. Consider restoring the code and database from a backup.'
+throwable_class: false
+throwable_message: 'Not available'
+throwable_backtrace: 'Not available.'

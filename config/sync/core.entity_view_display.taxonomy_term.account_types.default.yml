@@ -1,0 +1,30 @@
+uuid: d66a87ae-cebb-4a19-9372-f07a115b68b7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.account_types.field_statement_type
+    - taxonomy.vocabulary.account_types
+  module:
+    - options
+    - text
+id: taxonomy_term.account_types.default
+targetEntityType: taxonomy_term
+bundle: account_types
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_statement_type:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }

@@ -1,0 +1,24 @@
+uuid: cf074f5d-b186-4b46-917b-c1c8120bac7d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_notes
+    - filter.format.content_format
+    - node.type.invoice
+  module:
+    - text
+id: node.invoice.field_notes
+field_name: field_notes
+entity_type: node
+bundle: invoice
+label: Notes
+description: 'Notes if any.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats:
+    - content_format
+field_type: text_long

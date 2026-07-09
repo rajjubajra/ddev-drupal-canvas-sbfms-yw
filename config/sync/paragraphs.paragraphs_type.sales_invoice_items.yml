@@ -1,0 +1,10 @@
+uuid: 2cf00406-7363-4d73-969e-57e47f6ee49e
+langcode: en
+status: true
+dependencies: {  }
+id: sales_invoice_items
+label: 'Sales Invoice Items'
+icon_uuid: null
+icon_default: null
+description: 'Sales Invoice Items'
+behavior_plugins: {  }

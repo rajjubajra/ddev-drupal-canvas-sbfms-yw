@@ -1,0 +1,23 @@
+uuid: fde0de8d-d5af-4c8c-a6ed-689605924bab
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_quantity
+    - node.type.purchase_book
+id: node.purchase_book.field_quantity
+field_name: field_quantity
+entity_type: node
+bundle: purchase_book
+label: 'Purchase Box quantity'
+description: 'Purchased quantity number of box not a unit.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

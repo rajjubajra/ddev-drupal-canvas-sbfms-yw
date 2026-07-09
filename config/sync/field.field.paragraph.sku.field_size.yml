@@ -1,0 +1,19 @@
+uuid: 2eba9fc2-621b-4a5a-a6e8-19dc843b8df9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_size
+    - paragraphs.paragraphs_type.sku
+id: paragraph.sku.field_size
+field_name: field_size
+entity_type: paragraph
+bundle: sku
+label: Size
+description: 'Product Size, measuring unit'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

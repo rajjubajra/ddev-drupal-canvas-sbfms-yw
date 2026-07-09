@@ -1,0 +1,5 @@
+name: Account Types Hide Update Delete Icon
+type: module
+description: 'Hide edit and delete options for "account_types" taxonomy vocabularies.'
+core_version_requirement: ^9 || ^10 || ^11
+package: Custom

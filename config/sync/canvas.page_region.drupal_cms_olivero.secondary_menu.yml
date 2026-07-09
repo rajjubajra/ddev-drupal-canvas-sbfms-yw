@@ -1,0 +1,22 @@
+uuid: e8a455ae-e02f-42cd-85fc-abc40dc15dc0
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.component.block.system_menu_block.account
+  theme:
+    - drupal_cms_olivero
+id: drupal_cms_olivero.secondary_menu
+region: secondary_menu
+theme: drupal_cms_olivero
+component_tree:
+  -
+    uuid: 97a4a417-7759-489c-9fed-251aca0b436a
+    component_id: block.system_menu_block.account
+    component_version: 4b3fb59b8eadb12d
+    inputs:
+      label: 'User account menu'
+      label_display: '0'
+      level: 1
+      depth: 1
+      expand_all_items: false

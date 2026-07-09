@@ -1,0 +1,41 @@
+uuid: aa5ab12c-6093-4d9b-a709-59643b7154c4
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+  theme:
+    - drupal_cms_olivero
+active_version: 879f6ebad6ad3ce4
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions:
+        text:
+          required: true
+          field_type: string
+          field_storage_settings: {  }
+          field_instance_settings: {  }
+          field_widget: string_textfield
+          default_value:
+            -
+              value: 'A heading element'
+          expression: ℹ︎string␟value
+        element:
+          required: true
+          field_type: list_string
+          field_storage_settings:
+            allowed_values_function: canvas_load_allowed_values_for_component_prop
+          field_instance_settings: {  }
+          field_widget: options_select
+          default_value:
+            -
+              value: h1
+          expression: ℹ︎list_string␟value
+    fallback_metadata:
+      slot_definitions: {  }
+label: Heading
+id: sdc.drupal_cms_olivero.heading
+provider: drupal_cms_olivero
+source: sdc
+source_local_id: 'drupal_cms_olivero:heading'

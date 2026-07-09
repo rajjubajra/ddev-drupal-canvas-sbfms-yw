@@ -1,0 +1,13 @@
+uuid: e99c9244-9d83-461d-bda6-30b228c535e1
+langcode: en
+status: true
+dependencies:
+  module:
+    - media
+_core:
+  default_config_hash: C4dV28K3UsbLFSot0mwx3InBZ4XdBBC7Rzk2lLRrlJQ
+id: media.9_16_medium
+label: '9:16 Medium'
+description: ''
+targetEntityType: media
+cache: true

@@ -1,0 +1,19 @@
+uuid: 8ea008e8-49ee-4e92-b399-0ebf9ebad0ee
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_purchase_sale_reference_id
+    - node.type.acc_journal_entry
+id: node.acc_journal_entry.field_purchase_sale_reference_id
+field_name: field_purchase_sale_reference_id
+entity_type: node
+bundle: acc_journal_entry
+label: Purchase_sale_reference_id
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

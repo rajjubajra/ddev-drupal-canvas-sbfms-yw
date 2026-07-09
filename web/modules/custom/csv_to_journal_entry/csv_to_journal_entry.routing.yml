@@ -1,0 +1,7 @@
+csv_to_journal_entry.form:
+  path: '/admin/content/csv-to-journal-entry'
+  defaults:
+    _form: '\Drupal\csv_to_journal_entry\Form\CsvToJournalEntryImportForm'
+    _title: 'CSV to Journal Entry'
+  requirements:
+    _permission: 'import csv to journal entry'

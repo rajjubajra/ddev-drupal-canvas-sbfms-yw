@@ -1,0 +1,27 @@
+uuid: 41c6c660-695d-47cc-abb9-f4a63bb5c482
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.main
+  module:
+    - system
+  theme:
+    - olivero_sub
+_core:
+  default_config_hash: IYx37JlV-JCEqldSOUCsYu6gh4RpwuLDPpoeQcEF7mk
+id: olivero_sub_main_menu
+theme: olivero_sub
+region: primary_menu
+weight: 0
+provider: null
+plugin: 'system_menu_block:main'
+settings:
+  id: 'system_menu_block:main'
+  label: 'Main navigation'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 2
+  expand_all_items: true
+visibility: {  }

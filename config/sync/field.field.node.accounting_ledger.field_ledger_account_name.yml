@@ -1,0 +1,19 @@
+uuid: dea464f7-3d8f-4607-a761-b0c8bcbc7690
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ledger_account_name
+    - node.type.accounting_ledger
+id: node.accounting_ledger.field_ledger_account_name
+field_name: field_ledger_account_name
+entity_type: node
+bundle: accounting_ledger
+label: 'Ledger Account Name'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

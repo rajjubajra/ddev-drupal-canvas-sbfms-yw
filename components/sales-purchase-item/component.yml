@@ -1,0 +1,7 @@
+name: sales-purchase-item
+machineName: sales-purchase-item
+status: false
+required: []
+props:
+  properties: []
+slots: []

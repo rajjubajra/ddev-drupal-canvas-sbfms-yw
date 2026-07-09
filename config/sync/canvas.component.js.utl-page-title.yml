@@ -1,0 +1,18 @@
+uuid: 0d5c18df-982a-4848-a1f3-2f8342e30a68
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.js_component.utl-page-title
+active_version: 8fe3be948e0194e1
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions: {  }
+    fallback_metadata:
+      slot_definitions: {  }
+label: utl-page-title
+id: js.utl-page-title
+provider: null
+source: js
+source_local_id: utl-page-title

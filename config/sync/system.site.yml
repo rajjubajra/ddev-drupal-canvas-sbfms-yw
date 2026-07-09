@@ -1,0 +1,15 @@
+_core:
+  default_config_hash: HlN7eAN2N4JIHsYv56V4E7sqC9bS609KwvGFjyD_mgk
+langcode: en
+uuid: f761370a-dfd9-4cf9-b47c-2f6facac9061
+name: 'YW Accounting System'
+mail: rajjubajra@gmail.com
+slogan: 'Light Weight Accounting System'
+page:
+  403: /user/login
+  404: ''
+  front: /page/4
+admin_compact_mode: false
+weight_select_max: 100
+default_langcode: en
+mail_notification: null

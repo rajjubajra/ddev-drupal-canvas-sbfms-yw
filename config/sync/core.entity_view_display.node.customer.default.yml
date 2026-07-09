@@ -1,0 +1,101 @@
+uuid: 0344bfe9-53e2-4360-9ef7-1200ef5fa5cf
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.customer.field_address
+    - field.field.node.customer.field_contact_person
+    - field.field.node.customer.field_customer_code
+    - field.field.node.customer.field_customer_type
+    - field.field.node.customer.field_email
+    - field.field.node.customer.field_opening_balance
+    - field.field.node.customer.field_phone_number
+    - field.field.node.customer.field_status
+    - field.field.node.customer.field_tax_id
+    - node.type.customer
+  module:
+    - options
+    - text
+    - user
+id: node.customer.default
+targetEntityType: node
+bundle: customer
+mode: default
+content:
+  field_address:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 109
+    region: content
+  field_contact_person:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 108
+    region: content
+  field_customer_code:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_customer_type:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_email:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  field_opening_balance:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_phone_number:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 107
+    region: content
+  field_status:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  field_tax_id:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

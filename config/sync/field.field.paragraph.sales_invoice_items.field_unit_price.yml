@@ -1,0 +1,23 @@
+uuid: 930702ca-0753-42da-863e-3157ae933a1a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_unit_price
+    - paragraphs.paragraphs_type.sales_invoice_items
+id: paragraph.sales_invoice_items.field_unit_price
+field_name: field_unit_price
+entity_type: paragraph
+bundle: sales_invoice_items
+label: 'Unit Price'
+description: 'Unit price from product master'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

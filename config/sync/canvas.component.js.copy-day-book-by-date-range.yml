@@ -1,0 +1,18 @@
+uuid: 7123c333-9d7e-47ef-a2cb-b19c1f09d8fc
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.js_component.copy-day-book-by-date-range
+active_version: 8fe3be948e0194e1
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions: {  }
+    fallback_metadata:
+      slot_definitions: {  }
+label: copy-acc-day-book-by-date-range
+id: js.copy-day-book-by-date-range
+provider: null
+source: js
+source_local_id: copy-day-book-by-date-range

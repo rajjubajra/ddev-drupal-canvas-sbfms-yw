@@ -1,0 +1,107 @@
+uuid: 167d8cfa-d5fd-4b67-841c-b7b1ebb14f48
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.content_format
+    - media.type.document
+    - media.type.image
+    - media.type.remote_video
+    - media.type.svg_image
+    - node.type.acc_journal_entry
+    - node.type.accounting_ledger
+    - node.type.financial_year
+    - workflows.workflow.basic_editorial
+  module:
+    - content_moderation
+    - contextual
+    - file
+    - filter
+    - media
+    - navigation
+    - node
+    - path
+    - redirect
+    - scheduler
+    - system
+    - trash
+_core:
+  default_config_hash: g-zSnaBXJnH7VoimReFb6KcLjIgHCU-hisiShtZ9hjQ
+id: content_editor
+label: 'Sr. Accountant'
+weight: -7
+is_admin: false
+permissions:
+  - 'access administration pages'
+  - 'access content'
+  - 'access content overview'
+  - 'access contextual links'
+  - 'access media overview'
+  - 'access navigation'
+  - 'access trash'
+  - 'administer media'
+  - 'administer media types'
+  - 'administer redirects'
+  - 'administer url aliases'
+  - 'create acc_journal_entry content'
+  - 'create accounting_ledger content'
+  - 'create document media'
+  - 'create image media'
+  - 'create remote_video media'
+  - 'create svg_image media'
+  - 'create url aliases'
+  - 'delete acc_journal_entry revisions'
+  - 'delete accounting_ledger revisions'
+  - 'delete any acc_journal_entry content'
+  - 'delete any accounting_ledger content'
+  - 'delete any document media'
+  - 'delete any document media revisions'
+  - 'delete any image media'
+  - 'delete any image media revisions'
+  - 'delete any media'
+  - 'delete any remote_video media'
+  - 'delete any remote_video media revisions'
+  - 'delete any svg_image media'
+  - 'delete any svg_image media revisions'
+  - 'delete media'
+  - 'delete own acc_journal_entry content'
+  - 'delete own accounting_ledger content'
+  - 'delete own document media'
+  - 'delete own files'
+  - 'delete own image media'
+  - 'delete own remote_video media'
+  - 'delete own svg_image media'
+  - 'edit any acc_journal_entry content'
+  - 'edit any accounting_ledger content'
+  - 'edit any document media'
+  - 'edit any financial_year content'
+  - 'edit any image media'
+  - 'edit any remote_video media'
+  - 'edit any svg_image media'
+  - 'edit own acc_journal_entry content'
+  - 'edit own accounting_ledger content'
+  - 'edit own financial_year content'
+  - 'edit own remote_video media'
+  - 'revert acc_journal_entry revisions'
+  - 'revert accounting_ledger revisions'
+  - 'revert all revisions'
+  - 'revert any document media revisions'
+  - 'revert any image media revisions'
+  - 'revert any remote_video media revisions'
+  - 'revert any svg_image media revisions'
+  - 'schedule publishing of nodes'
+  - 'use basic_editorial transition create_new_draft'
+  - 'use basic_editorial transition publish'
+  - 'use basic_editorial transition unpublish'
+  - 'use text format content_format'
+  - 'view acc_journal_entry revisions'
+  - 'view accounting_ledger revisions'
+  - 'view all media revisions'
+  - 'view all revisions'
+  - 'view any remote_video media revisions'
+  - 'view any svg_image media revisions'
+  - 'view any unpublished content'
+  - 'view own unpublished content'
+  - 'view own unpublished media'
+  - 'view scheduled content'
+  - 'view the administration theme'

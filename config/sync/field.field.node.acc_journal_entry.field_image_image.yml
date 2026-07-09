@@ -1,0 +1,29 @@
+uuid: 19bff527-3753-408f-8d43-2698079a638b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_image_image
+    - media.type.image
+    - node.type.acc_journal_entry
+id: node.acc_journal_entry.field_image_image
+field_name: field_image_image
+entity_type: node
+bundle: acc_journal_entry
+label: 'Image File'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference

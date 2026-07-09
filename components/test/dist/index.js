@@ -1,0 +1,194 @@
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+    try {
+        var info = gen[key](arg);
+        var value = info.value;
+    } catch (error) {
+        reject(error);
+        return;
+    }
+    if (info.done) {
+        resolve(value);
+    } else {
+        Promise.resolve(value).then(_next, _throw);
+    }
+}
+function _async_to_generator(fn) {
+    return function() {
+        var self = this, args = arguments;
+        return new Promise(function(resolve, reject) {
+            var gen = fn.apply(self, args);
+            function _next(value) {
+                asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+            }
+            function _throw(err) {
+                asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+            }
+            _next(undefined);
+        });
+    };
+}
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function _object_spread(target) {
+    for(var i = 1; i < arguments.length; i++){
+        var source = arguments[i] != null ? arguments[i] : {};
+        var ownKeys = Object.keys(source);
+        if (typeof Object.getOwnPropertySymbols === "function") {
+            ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function(sym) {
+                return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+            }));
+        }
+        ownKeys.forEach(function(key) {
+            _define_property(target, key, source[key]);
+        });
+    }
+    return target;
+}
+function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+    if (Object.getOwnPropertySymbols) {
+        var symbols = Object.getOwnPropertySymbols(object);
+        if (enumerableOnly) {
+            symbols = symbols.filter(function(sym) {
+                return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+            });
+        }
+        keys.push.apply(keys, symbols);
+    }
+    return keys;
+}
+function _object_spread_props(target, source) {
+    source = source != null ? source : {};
+    if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+        ownKeys(Object(source)).forEach(function(key) {
+            Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+    }
+    return target;
+}
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { useState } from 'react';
+const Test = ()=>{
+    const [formData, setFormData] = useState({
+        title: '',
+        description: ''
+    });
+    /**
+ * 
+ * @returns SESSION TOKEN FOR POST FUCTION
+ */ function sessionToken() {
+        return fetch("/session/token", {
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            },
+            credentials: "include" // needed if using session auth
+        }).then((response)=>{
+            if (!response.ok) {
+                throw new Error("Failed to fetch CSRF token");
+            }
+            return response.text();
+        }).catch((error)=>{
+            console.error("Error fetching CSRF token:", error);
+            throw error;
+        });
+    }
+    /**-------------------------------------------------------------------------
+ * 
+ 
+ *  post function to create content using JSON:API. 
+    Make sure to adjust the endpoint and data structure 
+    according to your Drupal setup and content type fields. 
+ ---------------------------------------------------------------------------*/ function createTestContent(formData) {
+        return _async_to_generator(function*() {
+            const data = {
+                data: {
+                    type: "node--test_content",
+                    attributes: {
+                        title: formData.title,
+                        field_description: {
+                            value: formData.description,
+                            format: "plain_text"
+                        }
+                    }
+                }
+            };
+            console.log('DATA: ', data);
+            try {
+                const response = yield fetch("/jsonapi/node/test_content", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/vnd.api+json",
+                        "Accept": "application/vnd.api+json",
+                        // Uncomment if authentication is required:
+                        // "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+                        "X-CSRF-Token": yield sessionToken()
+                    },
+                    body: JSON.stringify(data),
+                    credentials: "include" // needed if using session auth
+                });
+                if (!response.ok) {
+                    const errorData = yield response.json();
+                    throw new Error(JSON.stringify(errorData));
+                }
+                const result = yield response.json();
+                console.log("Content created:", result);
+                return result;
+            } catch (error) {
+                console.error("Error creating content:", error);
+                throw error;
+            }
+        })();
+    }
+    return /*#__PURE__*/ _jsxs("div", {
+        children: [
+            /*#__PURE__*/ _jsx("h1", {
+                children: "Test Component"
+            }),
+            /*#__PURE__*/ _jsx("p", {
+                children: "This is a test component."
+            }),
+            /*#__PURE__*/ _jsxs("div", {
+                className: "flex flex-col gap-4",
+                children: [
+                    /*#__PURE__*/ _jsx("input", {
+                        type: "text",
+                        name: "title",
+                        onChange: (e)=>setFormData(_object_spread_props(_object_spread({}, formData), {
+                                title: e.target.value
+                            })),
+                        placeholder: "title"
+                    }),
+                    /*#__PURE__*/ _jsx("textarea", {
+                        className: "h-80 w-full",
+                        type: "text",
+                        name: "description",
+                        onChange: (e)=>setFormData(_object_spread_props(_object_spread({}, formData), {
+                                description: e.target.value
+                            })),
+                        placeholder: "description"
+                    }),
+                    /*#__PURE__*/ _jsx("button", {
+                        className: "bg-blue-500 text-white px-4 py-2 cursor-pointer",
+                        onClick: ()=>createTestContent(formData),
+                        children: "Submit"
+                    })
+                ]
+            })
+        ]
+    });
+};
+export default Test;

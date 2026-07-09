@@ -1,0 +1,36 @@
+uuid: 3f926107-1d64-4c53-b7bf-fda1a28dfd47
+langcode: en
+status: false
+dependencies: {  }
+machineName: utl-button
+name: utl-button
+required: {  }
+props: {  }
+slots: {  }
+js:
+  original: |
+    // See https://project.pages.drupalcode.org/canvas/ for documentation on how to build a code component
+
+    const Button = ({children}) => {
+      return (
+        <div className='px-4 py-2 my-4 cursor-pointer border hover:shadow-lg duration-500'>
+          {children}
+        </div>
+      );
+    };
+
+    export default Button;
+  compiled: |
+    import { jsx as _jsx } from "react/jsx-runtime";
+    // See https://project.pages.drupalcode.org/canvas/ for documentation on how to build a code component
+    const Button = ({ children })=>{
+        return /*#__PURE__*/ _jsx("div", {
+            className: "px-4 py-2 my-4 cursor-pointer border hover:shadow-lg duration-500",
+            children: children
+        });
+    };
+    export default Button;
+css:
+  original: ''
+  compiled: ''
+dataDependencies: {  }

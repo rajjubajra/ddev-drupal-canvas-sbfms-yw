@@ -1,0 +1,78 @@
+uuid: 1e9f4400-d9a2-4b4c-aa91-15762ba8ebad
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.invoice.field_customer_id
+    - field.field.node.invoice.field_invoice_date
+    - field.field.node.invoice.field_invoice_number
+    - field.field.node.invoice.field_notes
+    - field.field.node.invoice.field_sales_invoice_items
+    - field.field.node.invoice.field_total_amount
+    - node.type.invoice
+  module:
+    - datetime
+    - text
+    - user
+id: node.invoice.default
+targetEntityType: node
+bundle: invoice
+mode: default
+content:
+  field_customer_id:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 112
+    region: content
+  field_invoice_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_invoice_number:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 111
+    region: content
+  field_notes:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_sales_invoice_items:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 110
+    region: content
+  field_total_amount:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 109
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

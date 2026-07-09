@@ -1,0 +1,27 @@
+uuid: 2482c543-c921-4869-a423-bd460244ca83
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_csv_file_upload
+    - node.type.journal_import
+  module:
+    - file
+id: node.journal_import.field_csv_file_upload
+field_name: field_csv_file_upload
+entity_type: node
+bundle: journal_import
+label: 'CSV file upload'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: csv_files
+  file_extensions: csv
+  max_filesize: ''
+  description_field: false
+field_type: file

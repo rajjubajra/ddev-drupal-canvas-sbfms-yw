@@ -1,0 +1,29 @@
+uuid: 02e77f94-dd4a-4db1-8898-76243d9a842c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_customer_id
+    - node.type.customer
+    - node.type.invoice
+id: node.invoice.field_customer_id
+field_name: field_customer_id
+entity_type: node
+bundle: invoice
+label: 'Customer Id'
+description: 'Customer Id'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      customer: customer
+    sort:
+      field: nid
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

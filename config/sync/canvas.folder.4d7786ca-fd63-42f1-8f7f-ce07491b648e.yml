@@ -1,0 +1,9 @@
+uuid: 4d7786ca-fd63-42f1-8f7f-ce07491b648e
+langcode: en
+status: true
+dependencies: {  }
+name: Block
+configEntityTypeId: component
+weight: 0
+items:
+  - block.dashboard_placeholder

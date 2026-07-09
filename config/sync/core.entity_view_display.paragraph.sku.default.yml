@@ -1,0 +1,31 @@
+uuid: ecd7ec7d-8dd8-44b3-8ecc-d411f8d510b6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.sku.field_quantity_in_a_box
+    - field.field.paragraph.sku.field_size
+    - paragraphs.paragraphs_type.sku
+id: paragraph.sku.default
+targetEntityType: paragraph
+bundle: sku
+mode: default
+content:
+  field_quantity_in_a_box:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_size:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden: {  }

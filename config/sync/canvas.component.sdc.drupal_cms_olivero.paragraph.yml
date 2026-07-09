@@ -1,0 +1,41 @@
+uuid: ac4632f6-76c1-4e7d-b373-34f0505ac514
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+  theme:
+    - drupal_cms_olivero
+active_version: 736f8768395346da
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions:
+        text:
+          required: true
+          field_type: string_long
+          field_storage_settings: {  }
+          field_instance_settings: {  }
+          field_widget: string_textarea
+          default_value:
+            -
+              value: 'A paragraph element for text content.'
+          expression: ℹ︎string_long␟value
+        style:
+          required: true
+          field_type: list_string
+          field_storage_settings:
+            allowed_values_function: canvas_load_allowed_values_for_component_prop
+          field_instance_settings: {  }
+          field_widget: options_select
+          default_value:
+            -
+              value: standard
+          expression: ℹ︎list_string␟value
+    fallback_metadata:
+      slot_definitions: {  }
+label: Paragraph
+id: sdc.drupal_cms_olivero.paragraph
+provider: drupal_cms_olivero
+source: sdc
+source_local_id: 'drupal_cms_olivero:paragraph'

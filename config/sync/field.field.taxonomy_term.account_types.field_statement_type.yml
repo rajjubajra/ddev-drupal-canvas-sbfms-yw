@@ -1,0 +1,21 @@
+uuid: e5699180-d002-4f45-aa4f-60d7eac2809c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_statement_type
+    - taxonomy.vocabulary.account_types
+  module:
+    - options
+id: taxonomy_term.account_types.field_statement_type
+field_name: field_statement_type
+entity_type: taxonomy_term
+bundle: account_types
+label: 'Statement Type'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

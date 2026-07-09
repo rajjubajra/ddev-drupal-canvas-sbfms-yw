@@ -1,0 +1,21 @@
+uuid: f10bdedb-2187-4fa7-9695-1f9ce46fddf3
+langcode: en
+status: false
+dependencies:
+  module:
+    - canvas_oauth
+    - serialization
+    - simple_oauth
+    - user
+    - views
+id: entity.view
+plugin_id: 'entity:view'
+granularity: method
+configuration:
+  GET:
+    supported_formats:
+      - json
+    supported_auth:
+      - canvas_oauth
+      - oauth2
+      - cookie

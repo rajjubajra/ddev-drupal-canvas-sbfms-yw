@@ -1,0 +1,29 @@
+uuid: f9045b65-61ad-4345-ae77-c1d23b6d00d7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_product_name
+    - node.type.purchase_book
+    - taxonomy.vocabulary.product_name
+id: node.purchase_book.field_product_name
+field_name: field_product_name
+entity_type: node
+bundle: purchase_book
+label: 'Product Name'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      product_name: product_name
+    sort:
+      field: name
+      direction: asc
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference

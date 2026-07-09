@@ -1,0 +1,21 @@
+uuid: b50c4bc4-0791-4f68-9542-38c25d60e33b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_date
+    - node.type.acc_journal_entry
+  module:
+    - datetime
+id: node.acc_journal_entry.field_date
+field_name: field_date
+entity_type: node
+bundle: acc_journal_entry
+label: Date
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

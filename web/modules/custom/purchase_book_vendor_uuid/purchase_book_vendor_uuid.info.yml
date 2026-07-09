@@ -1,0 +1,7 @@
+name: Purchase Book Vendor UUID Autofill
+type: module
+description: Autofills Vendor UUID when selecting Vendor in Purchase Book content type.
+core_version_requirement: ^11
+package: Custom
+dependencies:
+  - drupal:node

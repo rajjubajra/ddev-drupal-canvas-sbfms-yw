@@ -1,0 +1,7 @@
+name: acc-trail-balance
+machineName: acc-trail-balance
+status: true
+required: []
+props:
+  properties: []
+slots: []

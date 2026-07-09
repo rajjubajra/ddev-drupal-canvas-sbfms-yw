@@ -1,0 +1,24 @@
+uuid: 593c2b33-4d3a-4908-a87b-2d7a1129adfd
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_address
+    - filter.format.plain_text
+    - node.type.customer
+  module:
+    - text
+id: node.customer.field_address
+field_name: field_address
+entity_type: node
+bundle: customer
+label: Address
+description: 'Business Address'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats:
+    - plain_text
+field_type: text_long

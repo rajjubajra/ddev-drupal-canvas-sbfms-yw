@@ -1,0 +1,29 @@
+uuid: 6f4c50d1-6ab2-4c2c-a647-6942c92ee3c2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.journal_import.field_csv_file_upload
+    - node.type.journal_import
+  module:
+    - file
+    - user
+id: node.journal_import.default
+targetEntityType: node
+bundle: journal_import
+mode: default
+content:
+  field_csv_file_upload:
+    type: file_default
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

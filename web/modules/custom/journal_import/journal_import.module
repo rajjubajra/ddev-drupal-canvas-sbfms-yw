@@ -1,0 +1,40 @@
+<?php
+
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
+use Drupal\node\NodeInterface;
+
+/**
+ * @file
+ * Contains journal_import.module.
+ * after saving a node of type journal_import, redirect to the form to process the CSV.
+ */
+function journal_import_node_insert(NodeInterface $node) {
+
+  if ($node->bundle() == 'journal_import') {
+
+    $url = \Drupal\Core\Url::fromRoute('journal_import.form');
+    $response = new RedirectResponse($url->toString());
+    $response->send();
+    exit;
+  }
+}
+
+
+
+function journal_import_node_presave(NodeInterface $node) {
+
+  if ($node->bundle() == 'journal_import') {
+
+    if (!$node->get('field_csv_file_upload')->isEmpty()) {
+
+      $fid = $node->get('field_csv_file_upload')->target_id;
+
+      \Drupal::service('tempstore.private')
+        ->get('journal_import')
+        ->set('csv_fid', $fid);
+
+      \Drupal::messenger()->addStatus("CSV FID stored: " . $fid); // debug
+    }
+  }
+}

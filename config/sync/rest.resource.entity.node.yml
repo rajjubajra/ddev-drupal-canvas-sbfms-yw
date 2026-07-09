@@ -1,0 +1,22 @@
+uuid: 7ccc34fd-15df-4420-987b-bbcc1980e34c
+langcode: en
+status: false
+dependencies:
+  module:
+    - canvas_oauth
+    - node
+    - serialization
+    - simple_oauth
+    - user
+id: entity.node
+plugin_id: 'entity:node'
+granularity: resource
+configuration:
+  methods:
+    - GET
+  formats:
+    - json
+  authentication:
+    - canvas_oauth
+    - oauth2
+    - cookie

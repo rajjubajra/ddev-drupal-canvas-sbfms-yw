@@ -1,0 +1,23 @@
+uuid: 08dd8c0d-6ae5-4e58-979e-53028ff01ca8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_amount
+    - node.type.acc_journal_entry
+id: node.acc_journal_entry.field_amount
+field_name: field_amount
+entity_type: node
+bundle: acc_journal_entry
+label: Amount
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 1.0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

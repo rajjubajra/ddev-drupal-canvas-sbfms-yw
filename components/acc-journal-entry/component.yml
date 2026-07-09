@@ -1,0 +1,7 @@
+name: acc-journal-entry
+machineName: acc-journal-entry
+status: true
+required: []
+props:
+  properties: []
+slots: []

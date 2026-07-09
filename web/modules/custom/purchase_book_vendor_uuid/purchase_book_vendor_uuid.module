@@ -1,0 +1,91 @@
+<?php
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_entity_presave().
+ */
+function purchase_book_vendor_uuid_entity_presave(EntityInterface $entity) {
+
+  // Only act on nodes.
+  if ($entity->getEntityTypeId() !== 'node') {
+    return;
+  }
+
+  // Only for purchase_book content type.
+  if ($entity->bundle() !== 'purchase_book') {
+    return;
+  }
+
+  // Ensure vendor field exists and has value.
+  if (!$entity->hasField('field_vendor') || $entity->get('field_vendor')->isEmpty()) {
+    return;
+  }
+
+  // Get referenced vendor entity.
+  $vendor = $entity->get('field_vendor')->entity;
+
+  if ($vendor && $vendor->bundle() === 'vendor') {
+
+    // Set UUID field automatically.
+    if ($entity->hasField('field_vendor_uuid')) {
+      $entity->set('field_vendor_uuid', $vendor->uuid());
+    }
+  }
+}
+
+
+
+
+/**
+ * Make vendor UUID field read-only on purchase_book form.
+ */
+function purchase_book_vendor_uuid_form_node_purchase_book_form_alter(&$form, FormStateInterface $form_state) {
+  _purchase_book_vendor_uuid_make_readonly($form);
+  // Add custom submit handler for redirect.
+  $form['actions']['submit']['#submit'][] = 'purchase_book_vendor_uuid_redirect_submit';
+}
+
+function purchase_book_vendor_uuid_form_node_purchase_book_edit_form_alter(&$form, FormStateInterface $form_state) {
+  _purchase_book_vendor_uuid_make_readonly($form);
+  // Add custom submit handler for redirect.
+  $form['actions']['submit']['#submit'][] = 'purchase_book_vendor_uuid_redirect_submit';
+}
+
+function _purchase_book_vendor_uuid_make_readonly(&$form) {
+
+  if (isset($form['field_vendor_uuid']['widget'][0]['value'])) {
+
+    // Make field hidden
+    $form['field_vendor_uuid']['widget'][0]['value']['#attributes']['hidden'] = 'hidden';
+
+    // Make field hidden
+    $form['field_sold_quantity_in_unit']['widget'][0]['value']['#attributes']['hidden'] = 'hidden';
+
+    // Make field readonly
+    $form['field_balance_stock']['widget'][0]['value']['#attributes']['readonly'] = 'readonly';
+
+    // Optional: add visual style
+    $form['field_vendor_uuid']['widget'][0]['value']['#attributes']['style'] = 'background-color:#f5f5f5;';
+
+    // Optional: add visual style
+    $form['field_balance_stock']['widget'][0]['value']['#attributes']['style'] = 'background-color:#f5f5f5;';
+  }
+}
+
+/**
+ * Custom submit handler to redirect after saving purchase_book.
+ */
+function purchase_book_vendor_uuid_redirect_submit($form, FormStateInterface $form_state) {
+  // Get the saved node.
+  $node = $form_state->getFormObject()->getEntity();
+  
+  // Check if it's a purchase_book node.
+  if ($node->bundle() === 'purchase_book') {
+    // Redirect to the specified URL with the node's UUID.
+    $uuid = $node->uuid();
+    $form_state->setRedirectUrl(\Drupal\Core\Url::fromUserInput('/purchase-post-journal/', ['query' => ['uuid' => $uuid]]));
+  }
+}

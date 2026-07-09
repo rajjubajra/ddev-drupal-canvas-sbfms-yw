@@ -1,0 +1,22 @@
+uuid: ae99a5c3-32cb-44fd-9521-3b347b4e4278
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.component.block.system_branding_block
+  theme:
+    - drupal_cms_olivero
+id: drupal_cms_olivero.header
+region: header
+theme: drupal_cms_olivero
+component_tree:
+  -
+    uuid: eb7d0f1b-41e1-4eb6-b419-9a18351b558b
+    component_id: block.system_branding_block
+    component_version: b168140fdcaebae5
+    inputs:
+      label: 'Site branding'
+      label_display: '0'
+      use_site_logo: true
+      use_site_name: true
+      use_site_slogan: false

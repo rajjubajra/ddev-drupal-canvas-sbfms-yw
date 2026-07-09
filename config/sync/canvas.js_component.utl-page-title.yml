@@ -1,0 +1,59 @@
+uuid: 6086ccab-f8b6-47f5-a849-95908952f3b1
+langcode: en
+status: false
+dependencies: {  }
+machineName: utl-page-title
+name: utl-page-title
+required: {  }
+props: {  }
+slots: {  }
+js:
+  original: |
+    // See https://project.pages.drupalcode.org/canvas/ for documentation on how to build a code component
+
+    const PageTitle = ({title, dateFrom, dateTo}) => {
+      return (
+        <div className='w-full md:my-10 mb-8 my-1 border-b border-blue-500 pb-2 font-bold'>
+        <div className="text-xl text-blue-500">{title}</div>
+          { !dateFrom || !dateTo
+            ? '' :
+        <div className="text-sm uppercase">Transaction From <b>{dateFrom}</b> to <b>{dateTo}</b></div>
+            
+          }
+        </div>
+      );
+    };
+
+      export default PageTitle;
+  compiled: |
+    import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+    // See https://project.pages.drupalcode.org/canvas/ for documentation on how to build a code component
+    const PageTitle = ({ title, dateFrom, dateTo })=>{
+        return /*#__PURE__*/ _jsxs("div", {
+            className: "w-full md:my-10 mb-8 my-1 border-b border-blue-500 pb-2 font-bold",
+            children: [
+                /*#__PURE__*/ _jsx("div", {
+                    className: "text-xl text-blue-500",
+                    children: title
+                }),
+                !dateFrom || !dateTo ? '' : /*#__PURE__*/ _jsxs("div", {
+                    className: "text-sm uppercase",
+                    children: [
+                        "Transaction From ",
+                        /*#__PURE__*/ _jsx("b", {
+                            children: dateFrom
+                        }),
+                        " to ",
+                        /*#__PURE__*/ _jsx("b", {
+                            children: dateTo
+                        })
+                    ]
+                })
+            ]
+        });
+    };
+    export default PageTitle;
+css:
+  original: ''
+  compiled: ''
+dataDependencies: {  }

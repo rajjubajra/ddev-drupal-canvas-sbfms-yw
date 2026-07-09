@@ -1,0 +1,27 @@
+uuid: 3fc5ab8e-11b7-4964-8cbc-00343c81c9b8
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - canvas_oauth
+_core:
+  default_config_hash: '-UR5wFzaOXlhr_z5YIsPVqnwmhjRafU9YesGhI-3cZg'
+id: canvas_asset_library
+name: 'canvas:asset_library'
+description: 'Drupal Canvas: Full access to asset libraries'
+grant_types:
+  client_credentials:
+    status: true
+    description: 'Client credentials access for asset libraries'
+  authorization_code:
+    status: false
+    description: ''
+  refresh_token:
+    status: false
+    description: ''
+umbrella: false
+parent: null
+granularity_id: permission
+granularity_configuration:
+  permission: 'administer code components'

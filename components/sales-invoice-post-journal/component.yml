@@ -1,0 +1,7 @@
+name: sales-invoice-post-journal
+machineName: sales-invoice-post-journal
+status: false
+required: []
+props:
+  properties: []
+slots: []

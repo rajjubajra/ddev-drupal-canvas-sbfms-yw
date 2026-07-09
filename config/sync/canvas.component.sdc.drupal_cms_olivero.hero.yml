@@ -1,0 +1,109 @@
+uuid: 7e1092bc-38a6-4cb9-99d8-3f144758398a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.media.image.field_media_image
+    - field.field.media.svg_image.field_media_svg_image
+    - image.style.canvas_parametrized_width
+    - media.type.image
+    - media.type.svg_image
+  module:
+    - file
+    - link
+    - media
+    - media_library
+  theme:
+    - drupal_cms_olivero
+active_version: c65e90f8f88fce54
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions:
+        title:
+          required: true
+          field_type: string
+          field_storage_settings: {  }
+          field_instance_settings: {  }
+          field_widget: string_textfield
+          default_value:
+            -
+              value: 'Hero title text'
+          expression: ℹ︎string␟value
+        summary:
+          required: false
+          field_type: string_long
+          field_storage_settings: {  }
+          field_instance_settings: {  }
+          field_widget: string_textarea
+          default_value:
+            -
+              value: 'Hero summary is an optional field and can span multiple lines'
+          expression: ℹ︎string_long␟value
+        image:
+          required: false
+          field_type: entity_reference
+          field_storage_settings:
+            target_type: media
+          field_instance_settings:
+            handler: 'default:media'
+            handler_settings:
+              target_bundles:
+                image: image
+                svg_image: svg_image
+          field_widget: media_library_widget
+          default_value: {  }
+          expression: 'ℹ︎entity_reference␟{src↝entity␜␜entity:media:image|svg_image␝field_media_image|field_media_svg_image␞␟src_with_alternate_widths,alt↝entity␜␜entity:media:image|svg_image␝field_media_image|field_media_svg_image␞␟alt,width↝entity␜␜entity:media:image|svg_image␝field_media_image|field_media_svg_image␞␟width,height↝entity␜␜entity:media:image|svg_image␝field_media_image|field_media_svg_image␞␟height}'
+        link_text_1:
+          required: false
+          field_type: string
+          field_storage_settings: {  }
+          field_instance_settings: {  }
+          field_widget: string_textfield
+          default_value:
+            -
+              value: 'Primary link'
+          expression: ℹ︎string␟value
+        link_url_1:
+          required: true
+          field_type: link
+          field_storage_settings: {  }
+          field_instance_settings:
+            title: 0
+            link_type: 16
+          field_widget: link_default
+          default_value:
+            -
+              uri: 'https://example.com'
+              options: {  }
+          expression: ℹ︎link␟url
+        link_text_2:
+          required: false
+          field_type: string
+          field_storage_settings: {  }
+          field_instance_settings: {  }
+          field_widget: string_textfield
+          default_value:
+            -
+              value: 'Secondary link'
+          expression: ℹ︎string␟value
+        link_url_2:
+          required: false
+          field_type: link
+          field_storage_settings: {  }
+          field_instance_settings:
+            title: 0
+            link_type: 16
+          field_widget: link_default
+          default_value:
+            -
+              uri: 'https://example.com'
+              options: {  }
+          expression: ℹ︎link␟url
+    fallback_metadata:
+      slot_definitions: {  }
+label: Hero
+id: sdc.drupal_cms_olivero.hero
+provider: drupal_cms_olivero
+source: sdc
+source_local_id: 'drupal_cms_olivero:hero'

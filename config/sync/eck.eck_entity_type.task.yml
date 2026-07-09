@@ -1,0 +1,12 @@
+uuid: d1c25092-91fa-4a04-9c03-d54e7e935794
+langcode: en
+status: false
+dependencies: {  }
+id: task
+label: Task
+description: 'Use for creating tasks'
+uid: true
+created: true
+changed: true
+title: true
+standalone_url: true

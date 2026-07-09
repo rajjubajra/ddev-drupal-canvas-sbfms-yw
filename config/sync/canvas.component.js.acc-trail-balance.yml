@@ -1,0 +1,18 @@
+uuid: 68027acc-b4cb-4359-9a4f-6e0ff89df26b
+langcode: en
+status: true
+dependencies:
+  config:
+    - canvas.js_component.acc-trail-balance
+active_version: 8fe3be948e0194e1
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions: {  }
+    fallback_metadata:
+      slot_definitions: {  }
+label: acc-trail-balance
+id: js.acc-trail-balance
+provider: null
+source: js
+source_local_id: acc-trail-balance

@@ -1,0 +1,27 @@
+uuid: 8becd56c-1388-409b-8f4b-5fc20288136b
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - canvas_oauth
+_core:
+  default_config_hash: uJcu94UPaGAeFseJ_-hBCFS861VXg9GuU_woqnWtyiE
+id: canvas_js_component
+name: 'canvas:js_component'
+description: 'Drupal Canvas: Full access to JavaScript components'
+grant_types:
+  client_credentials:
+    status: true
+    description: 'Client credentials access for JavaScript components'
+  authorization_code:
+    status: false
+    description: ''
+  refresh_token:
+    status: false
+    description: ''
+umbrella: false
+parent: null
+granularity_id: permission
+granularity_configuration:
+  permission: 'administer code components'

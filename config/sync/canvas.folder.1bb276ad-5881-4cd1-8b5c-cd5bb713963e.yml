@@ -1,0 +1,10 @@
+uuid: 1bb276ad-5881-4cd1-8b5c-cd5bb713963e
+langcode: en
+status: true
+dependencies: {  }
+name: IncomeStatementUtils
+configEntityTypeId: js_component
+weight: 0
+items:
+  - preact-test
+  - revenue

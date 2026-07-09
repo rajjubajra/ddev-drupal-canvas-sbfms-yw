@@ -1,0 +1,21 @@
+uuid: 4586032e-9d6d-43f4-984a-94ec735e3ef9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_date_to
+    - node.type.financial_year
+  module:
+    - datetime
+id: node.financial_year.field_date_to
+field_name: field_date_to
+entity_type: node
+bundle: financial_year
+label: 'Date To'
+description: 'Financial year end date'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

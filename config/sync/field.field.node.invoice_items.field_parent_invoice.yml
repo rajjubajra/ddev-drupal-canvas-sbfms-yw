@@ -1,0 +1,29 @@
+uuid: 8439c03a-d5bf-4066-9e75-66b4ada094ae
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_parent_invoice
+    - node.type.invoice
+    - node.type.invoice_items
+id: node.invoice_items.field_parent_invoice
+field_name: field_parent_invoice
+entity_type: node
+bundle: invoice_items
+label: 'Parent Invoice'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      invoice: invoice
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

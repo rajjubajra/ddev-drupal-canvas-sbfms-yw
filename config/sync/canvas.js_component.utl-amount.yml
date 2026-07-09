@@ -1,0 +1,55 @@
+uuid: 8baec055-df7e-43de-af67-38ecd4c9c7f7
+langcode: en
+status: false
+dependencies: {  }
+machineName: utl-amount
+name: utl-amount
+required: {  }
+props: {  }
+slots: {  }
+js:
+  original: |
+
+    /**
+     * 
+     * IMPORTANT NOTE: 
+     *  - DO NOT ADD MARGIN AND PADDING AT ALL 
+     *  - THIS IS JUST FOR number format
+     *  - Currency Name
+     *   
+     */
+
+    const Amount = ({amt}) => {
+      return (
+        <div className="text-sm w-full text-right">
+          <span> {Number(amt).toFixed(2)}</span>
+        </div>
+      );
+    };
+
+    export default Amount;
+  compiled: |
+    import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+    /**
+     * 
+     * IMPORTANT NOTE: 
+     *  - DO NOT ADD MARGIN AND PADDING AT ALL 
+     *  - THIS IS JUST FOR number format
+     *  - Currency Name
+     *   
+     */ const Amount = ({ amt })=>{
+        return /*#__PURE__*/ _jsx("div", {
+            className: "text-sm w-full text-right",
+            children: /*#__PURE__*/ _jsxs("span", {
+                children: [
+                    " ",
+                    Number(amt).toFixed(2)
+                ]
+            })
+        });
+    };
+    export default Amount;
+css:
+  original: ''
+  compiled: ''
+dataDependencies: {  }

@@ -1,0 +1,196 @@
+uuid: 6412a27c-0bf6-4119-90c5-13c9d970de00
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.purchase_book.field_cost_price
+    - field.field.node.purchase_book.field_image_image
+    - field.field.node.purchase_book.field_invoice_date
+    - field.field.node.purchase_book.field_mrp
+    - field.field.node.purchase_book.field_product_brand
+    - field.field.node.purchase_book.field_product_code
+    - field.field.node.purchase_book.field_product_company
+    - field.field.node.purchase_book.field_product_name
+    - field.field.node.purchase_book.field_product_size
+    - field.field.node.purchase_book.field_purchase_reference
+    - field.field.node.purchase_book.field_quantity
+    - field.field.node.purchase_book.field_received_date
+    - field.field.node.purchase_book.field_sales_department
+    - field.field.node.purchase_book.field_selling_price
+    - field.field.node.purchase_book.field_sku
+    - field.field.node.purchase_book.field_unit_per_box
+    - field.field.node.purchase_book.field_vendor
+    - field.field.node.purchase_book.field_vendor_uuid
+    - node.type.purchase_book
+  module:
+    - datetime
+    - user
+id: node.purchase_book.default
+targetEntityType: node
+bundle: purchase_book
+mode: default
+content:
+  field_cost_price:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  field_image_image:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  field_invoice_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_mrp:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 127
+    region: content
+  field_product_brand:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 117
+    region: content
+  field_product_code:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 111
+    region: content
+  field_product_company:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 116
+    region: content
+  field_product_name:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 115
+    region: content
+  field_product_size:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 126
+    region: content
+  field_purchase_reference:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 118
+    region: content
+  field_quantity:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_received_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 119
+    region: content
+  field_sales_department:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 125
+    region: content
+  field_selling_price:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  field_sku:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 114
+    region: content
+  field_unit_per_box:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 122
+    region: content
+  field_vendor:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 120
+    region: content
+  field_vendor_uuid:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 121
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

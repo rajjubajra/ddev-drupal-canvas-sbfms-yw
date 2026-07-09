@@ -1,0 +1,456 @@
+uuid: 5b772c5d-9ad4-4469-9773-eba7a343a896
+langcode: en
+status: false
+dependencies:
+  enforced:
+    config:
+      - canvas.js_component.utl-page-title
+machineName: copy-acc-trial-balance-by-date-range
+name: copy-acc-trial-balance-by-date-range
+required: {  }
+props: {  }
+slots: {  }
+js:
+  original: |
+    import { useState, useEffect } from 'react';
+    import useSWR from 'swr';
+    import { JsonApiClient } from 'drupal-canvas';
+    import { DrupalJsonApiParams } from 'drupal-jsonapi-params';
+
+    import PageTitle from '@/components/utl-page-title';
+
+    /* --------------------------------------------------
+       Drupal JSON:API Client
+    -------------------------------------------------- */
+    const client = new JsonApiClient();
+
+
+
+
+
+    export default function TrialBalance() {
+      
+      
+      /* --------------------------------------------------
+         State: Date Filters (default = defined fiscal year)
+      -------------------------------------------------- */
+
+      const [datePickedFrom, setDatePickedFrom] = useState('');
+      const [datePickedTo, setDatePickedTo] = useState('');
+      
+      const [dateFrom, setDateFrom] = useState('');
+      const [dateTo, setDateTo] = useState('');
+
+
+          /* --------------------------------------------------
+               Fetch: Financial Year
+            -------------------------------------------------- */
+            const { data:fy, error:fyError, isLoading:fyIsLoading } = useSWR(
+              [
+                'node--financial_year',
+                {
+                  queryString: new DrupalJsonApiParams()
+                    .addSort(['-created'])
+                    .getQueryString(),
+                },
+              ],
+              ([type, options]) => client.getCollection(type, options)
+            );
+          
+            
+          
+             useEffect(() => {
+          
+               if(datePickedFrom === undefined || datePickedFrom === '' 
+                  && datePickedTo === undefined || datePickedTo === '')
+               {
+                 setDateFrom(fy[0].field_date_from);
+                 setDateTo(fy[0].field_date_to);
+               }else{
+                 setDateFrom(datePickedFrom);
+                 setDateTo(datePickedTo);
+               }
+               
+             },[fy])
+
+
+      
+
+      const [sumOfDrAmount, setSumOfDrAmount] = useState(0);
+      const [sumOfCrAmount, setSumOfCrAmount] = useState(0);
+
+      /* --------------------------------------------------
+         Fetch: Ledger List
+      -------------------------------------------------- */
+      const { data: ledgers } = useSWR(
+        [
+          'node--accounting_ledger',
+          {
+            queryString: new DrupalJsonApiParams()
+              .addInclude(['field_account_type'])
+              .getQueryString(),
+          },
+        ],
+        ([type, options]) => client.getCollection(type, options)
+      );
+
+      /* --------------------------------------------------
+         Fetch: Journal Entries (Date Range)
+      -------------------------------------------------- */
+      const { data: journals, error, isLoading } = useSWR(
+        [
+          'node--journal_entry',
+          dateFrom,
+          dateTo,
+          {
+            queryString: new DrupalJsonApiParams()
+              .addInclude([
+                'field_debit_entry.field_ledger_account_name',
+                'field_credit_entry.field_ledger_account_name',
+              ])
+              .addSort(['field_date'])
+              .addFilter('field_date', dateFrom, '>=')
+              .addFilter('field_date', dateTo, '<=')
+              .getQueryString(),
+          },
+        ],
+        ([type, , , options]) => client.getCollection(type, options)
+      );
+
+      /* --------------------------------------------------
+         Helpers: Ledger totals
+      -------------------------------------------------- */
+      const getDebitTotalByLedger = (ledgerId) => {
+        if (!journals) return 0;
+
+        return journals.reduce((total, entry) => {
+          if (
+            entry.field_debit_entry.field_ledger_account_name.id ===
+            ledgerId
+          ) {
+            return (
+              total +
+              Number(
+                entry.field_debit_entry.field_debit_amount || 0
+              )
+            );
+          }
+          return total;
+        }, 0);
+      };
+
+      const getCreditTotalByLedger = (ledgerId) => {
+        if (!journals) return 0;
+
+        return journals.reduce((total, entry) => {
+          if (
+            entry.field_credit_entry.field_ledger_account_name.id ===
+            ledgerId
+          ) {
+            return (
+              total +
+              Number(
+                entry.field_credit_entry.field_credit_amount || 0
+              )
+            );
+          }
+          return total;
+        }, 0);
+      };
+
+      /* --------------------------------------------------
+         Compute Trial Balance Totals
+      -------------------------------------------------- */
+      useEffect(() => {
+        if (!journals) return;
+
+        const debitTotal = journals.reduce(
+          (sum, entry) =>
+            sum +
+            Number(
+              entry.field_debit_entry.field_debit_amount || 0
+            ),
+          0
+        );
+
+        const creditTotal = journals.reduce(
+          (sum, entry) =>
+            sum +
+            Number(
+              entry.field_credit_entry.field_credit_amount || 0
+            ),
+          0
+        );
+
+        setSumOfDrAmount(debitTotal);
+        setSumOfCrAmount(creditTotal);
+      }, [journals]);
+
+      /* --------------------------------------------------
+         Render States
+      -------------------------------------------------- */
+      if (error) return 'An error has occurred.';
+      if (isLoading) return 'Loading...';
+
+      /* --------------------------------------------------
+         Render UI
+      -------------------------------------------------- */
+      return (
+        <div>
+          <PageTitle
+            title="Trial Balance"
+            dateFrom={dateFrom}
+            dateTo={dateTo}
+          />
+
+          {/* ---------------- Date Filter ---------------- */}
+          <form
+            className="flex gap-4 my-6 p-4 border rounded"
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Date From
+              </label>
+              <input
+                type="date"
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+                className="border px-2 py-1 rounded"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Date To
+              </label>
+              <input
+                type="date"
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+                className="border px-2 py-1 rounded"
+              />
+            </div>
+          </form>
+
+          {/* ---------------- Table Header ---------------- */}
+          <div className="grid grid-cols-3 border-b mb-4 font-semibold">
+            <div>Particular</div>
+            <div>Dr Amount</div>
+            <div>Cr Amount</div>
+          </div>
+
+          {/* ---------------- Ledger Rows ---------------- */}
+          {ledgers?.map((ledger) => (
+            <div key={ledger.id} className="grid grid-cols-3">
+              <div>{ledger.field_ledger_account_name}</div>
+              <div>{getDebitTotalByLedger(ledger.id)}</div>
+              <div>{getCreditTotalByLedger(ledger.id)}</div>
+            </div>
+          ))}
+
+          {/* ---------------- Totals ---------------- */}
+          <div className="grid grid-cols-3 border-t py-4 font-bold">
+            <div>Total</div>
+            <div>{sumOfDrAmount}</div>
+            <div>{sumOfCrAmount}</div>
+          </div>
+        </div>
+      );
+    }
+  compiled: |
+    import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+    import { useState, useEffect } from 'react';
+    import useSWR from 'swr';
+    import { JsonApiClient } from 'drupal-canvas';
+    import { DrupalJsonApiParams } from 'drupal-jsonapi-params';
+    import PageTitle from '@/components/utl-page-title';
+    /* --------------------------------------------------
+       Drupal JSON:API Client
+    -------------------------------------------------- */ const client = new JsonApiClient();
+    export default function TrialBalance() {
+        /* --------------------------------------------------
+         State: Date Filters (default = defined fiscal year)
+      -------------------------------------------------- */ const [datePickedFrom, setDatePickedFrom] = useState('');
+        const [datePickedTo, setDatePickedTo] = useState('');
+        const [dateFrom, setDateFrom] = useState('');
+        const [dateTo, setDateTo] = useState('');
+        /* --------------------------------------------------
+               Fetch: Financial Year
+            -------------------------------------------------- */ const { data: fy, error: fyError, isLoading: fyIsLoading } = useSWR([
+            'node--financial_year',
+            {
+                queryString: new DrupalJsonApiParams().addSort([
+                    '-created'
+                ]).getQueryString()
+            }
+        ], ([type, options])=>client.getCollection(type, options));
+        useEffect(()=>{
+            if (datePickedFrom === undefined || datePickedFrom === '' && datePickedTo === undefined || datePickedTo === '') {
+                setDateFrom(fy[0].field_date_from);
+                setDateTo(fy[0].field_date_to);
+            } else {
+                setDateFrom(datePickedFrom);
+                setDateTo(datePickedTo);
+            }
+        }, [
+            fy
+        ]);
+        const [sumOfDrAmount, setSumOfDrAmount] = useState(0);
+        const [sumOfCrAmount, setSumOfCrAmount] = useState(0);
+        /* --------------------------------------------------
+         Fetch: Ledger List
+      -------------------------------------------------- */ const { data: ledgers } = useSWR([
+            'node--accounting_ledger',
+            {
+                queryString: new DrupalJsonApiParams().addInclude([
+                    'field_account_type'
+                ]).getQueryString()
+            }
+        ], ([type, options])=>client.getCollection(type, options));
+        /* --------------------------------------------------
+         Fetch: Journal Entries (Date Range)
+      -------------------------------------------------- */ const { data: journals, error, isLoading } = useSWR([
+            'node--journal_entry',
+            dateFrom,
+            dateTo,
+            {
+                queryString: new DrupalJsonApiParams().addInclude([
+                    'field_debit_entry.field_ledger_account_name',
+                    'field_credit_entry.field_ledger_account_name'
+                ]).addSort([
+                    'field_date'
+                ]).addFilter('field_date', dateFrom, '>=').addFilter('field_date', dateTo, '<=').getQueryString()
+            }
+        ], ([type, , , options])=>client.getCollection(type, options));
+        /* --------------------------------------------------
+         Helpers: Ledger totals
+      -------------------------------------------------- */ const getDebitTotalByLedger = (ledgerId)=>{
+            if (!journals) return 0;
+            return journals.reduce((total, entry)=>{
+                if (entry.field_debit_entry.field_ledger_account_name.id === ledgerId) {
+                    return total + Number(entry.field_debit_entry.field_debit_amount || 0);
+                }
+                return total;
+            }, 0);
+        };
+        const getCreditTotalByLedger = (ledgerId)=>{
+            if (!journals) return 0;
+            return journals.reduce((total, entry)=>{
+                if (entry.field_credit_entry.field_ledger_account_name.id === ledgerId) {
+                    return total + Number(entry.field_credit_entry.field_credit_amount || 0);
+                }
+                return total;
+            }, 0);
+        };
+        /* --------------------------------------------------
+         Compute Trial Balance Totals
+      -------------------------------------------------- */ useEffect(()=>{
+            if (!journals) return;
+            const debitTotal = journals.reduce((sum, entry)=>sum + Number(entry.field_debit_entry.field_debit_amount || 0), 0);
+            const creditTotal = journals.reduce((sum, entry)=>sum + Number(entry.field_credit_entry.field_credit_amount || 0), 0);
+            setSumOfDrAmount(debitTotal);
+            setSumOfCrAmount(creditTotal);
+        }, [
+            journals
+        ]);
+        /* --------------------------------------------------
+         Render States
+      -------------------------------------------------- */ if (error) return 'An error has occurred.';
+        if (isLoading) return 'Loading...';
+        /* --------------------------------------------------
+         Render UI
+      -------------------------------------------------- */ return /*#__PURE__*/ _jsxs("div", {
+            children: [
+                /*#__PURE__*/ _jsx(PageTitle, {
+                    title: "Trial Balance",
+                    dateFrom: dateFrom,
+                    dateTo: dateTo
+                }),
+                /*#__PURE__*/ _jsxs("form", {
+                    className: "flex gap-4 my-6 p-4 border rounded",
+                    onSubmit: (e)=>e.preventDefault(),
+                    children: [
+                        /*#__PURE__*/ _jsxs("div", {
+                            children: [
+                                /*#__PURE__*/ _jsx("label", {
+                                    className: "block text-sm font-semibold mb-1",
+                                    children: "Date From"
+                                }),
+                                /*#__PURE__*/ _jsx("input", {
+                                    type: "date",
+                                    value: dateFrom,
+                                    onChange: (e)=>setDateFrom(e.target.value),
+                                    className: "border px-2 py-1 rounded"
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsxs("div", {
+                            children: [
+                                /*#__PURE__*/ _jsx("label", {
+                                    className: "block text-sm font-semibold mb-1",
+                                    children: "Date To"
+                                }),
+                                /*#__PURE__*/ _jsx("input", {
+                                    type: "date",
+                                    value: dateTo,
+                                    onChange: (e)=>setDateTo(e.target.value),
+                                    className: "border px-2 py-1 rounded"
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                /*#__PURE__*/ _jsxs("div", {
+                    className: "grid grid-cols-3 border-b mb-4 font-semibold",
+                    children: [
+                        /*#__PURE__*/ _jsx("div", {
+                            children: "Particular"
+                        }),
+                        /*#__PURE__*/ _jsx("div", {
+                            children: "Dr Amount"
+                        }),
+                        /*#__PURE__*/ _jsx("div", {
+                            children: "Cr Amount"
+                        })
+                    ]
+                }),
+                ledgers === null || ledgers === void 0 ? void 0 : ledgers.map((ledger)=>/*#__PURE__*/ _jsxs("div", {
+                        className: "grid grid-cols-3",
+                        children: [
+                            /*#__PURE__*/ _jsx("div", {
+                                children: ledger.field_ledger_account_name
+                            }),
+                            /*#__PURE__*/ _jsx("div", {
+                                children: getDebitTotalByLedger(ledger.id)
+                            }),
+                            /*#__PURE__*/ _jsx("div", {
+                                children: getCreditTotalByLedger(ledger.id)
+                            })
+                        ]
+                    }, ledger.id)),
+                /*#__PURE__*/ _jsxs("div", {
+                    className: "grid grid-cols-3 border-t py-4 font-bold",
+                    children: [
+                        /*#__PURE__*/ _jsx("div", {
+                            children: "Total"
+                        }),
+                        /*#__PURE__*/ _jsx("div", {
+                            children: sumOfDrAmount
+                        }),
+                        /*#__PURE__*/ _jsx("div", {
+                            children: sumOfCrAmount
+                        })
+                    ]
+                })
+            ]
+        });
+    }
+css:
+  original: ''
+  compiled: |
+    /*! tailwindcss v4.1.13 | MIT License | https://tailwindcss.com */
+dataDependencies:
+  drupalSettings:
+    - v0.baseUrl
+    - v0.jsonapiSettings

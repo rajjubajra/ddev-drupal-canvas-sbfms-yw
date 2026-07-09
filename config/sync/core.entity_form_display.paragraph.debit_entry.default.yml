@@ -1,0 +1,33 @@
+uuid: 06906d28-d70a-4431-9ee6-4842521ca402
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.debit_entry.field_debit_amount
+    - field.field.paragraph.debit_entry.field_ledger_account_name
+    - paragraphs.paragraphs_type.debit_entry
+id: paragraph.debit_entry.default
+targetEntityType: paragraph
+bundle: debit_entry
+mode: default
+content:
+  field_debit_amount:
+    type: number
+    weight: 0
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_ledger_account_name:
+    type: entity_reference_autocomplete_tags
+    weight: 1
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

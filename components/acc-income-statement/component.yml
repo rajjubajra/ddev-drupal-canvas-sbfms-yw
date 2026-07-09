@@ -1,0 +1,7 @@
+name: acc-income-statement
+machineName: acc-income-statement
+status: true
+required: []
+props:
+  properties: []
+slots: []

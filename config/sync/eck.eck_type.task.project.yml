@@ -1,0 +1,9 @@
+uuid: db448aa5-70f8-439b-9f2b-e1d59318a8d3
+langcode: en
+status: true
+dependencies:
+  config:
+    - eck.eck_entity_type.task
+name: Project
+type: project
+description: 'Used for projects'

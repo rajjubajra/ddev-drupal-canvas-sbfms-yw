@@ -1,0 +1,18 @@
+uuid: 8071932f-97ad-41fe-a2fc-c47c1352d0f7
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.js_component.acc-balance-sheet
+active_version: 8fe3be948e0194e1
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions: {  }
+    fallback_metadata:
+      slot_definitions: {  }
+label: acc-balance-sheet
+id: js.acc-balance-sheet
+provider: null
+source: js
+source_local_id: acc-balance-sheet

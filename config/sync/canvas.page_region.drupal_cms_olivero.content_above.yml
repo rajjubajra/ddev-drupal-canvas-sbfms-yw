@@ -1,0 +1,19 @@
+uuid: a5f1f784-8729-4d11-ac31-6e61be563e95
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.component.block.page_title_block
+  theme:
+    - drupal_cms_olivero
+id: drupal_cms_olivero.content_above
+region: content_above
+theme: drupal_cms_olivero
+component_tree:
+  -
+    uuid: e0153a28-63f0-46d8-bb61-23ca1fdd6d36
+    component_id: block.page_title_block
+    component_version: 90ce139b2d3e2601
+    inputs:
+      label: 'Page title'
+      label_display: '0'

@@ -1,0 +1,24 @@
+uuid: cc50b227-3d12-4300-88f7-24fdc864bbe3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_date
+    - node.type.vendor
+  module:
+    - datetime
+id: node.vendor.field_date
+field_name: field_date
+entity_type: node
+bundle: vendor
+label: Date
+description: 'Registered date'
+required: true
+translatable: false
+default_value:
+  -
+    default_date_type: now
+    default_date: now
+default_value_callback: ''
+settings: {  }
+field_type: datetime

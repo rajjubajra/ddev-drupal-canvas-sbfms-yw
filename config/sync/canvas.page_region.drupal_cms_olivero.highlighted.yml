@@ -1,0 +1,46 @@
+uuid: 02e03e47-c5f5-43e3-98cb-8e2a5ed2dca4
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.component.block.local_actions_block
+    - canvas.component.block.local_tasks_block
+    - canvas.component.block.system_messages_block
+  theme:
+    - drupal_cms_olivero
+id: drupal_cms_olivero.highlighted
+region: highlighted
+theme: drupal_cms_olivero
+component_tree:
+  -
+    uuid: 72f4176f-a874-45cf-a368-e639f889e4a9
+    component_id: block.local_actions_block
+    component_version: 29753123eb31b8ab
+    inputs:
+      label: 'Primary admin actions'
+      label_display: '0'
+  -
+    uuid: 26a236db-55c3-4b4d-9049-8932510713c3
+    component_id: block.local_tasks_block
+    component_version: 429966cebad152ba
+    inputs:
+      label: 'Primary tabs'
+      label_display: '0'
+      primary: true
+      secondary: false
+  -
+    uuid: 478b461c-93f1-484c-b6eb-1fd333e6bd46
+    component_id: block.local_tasks_block
+    component_version: 429966cebad152ba
+    inputs:
+      label: 'Secondary tabs'
+      label_display: '0'
+      primary: false
+      secondary: true
+  -
+    uuid: 4c9b8326-1472-4792-aa38-ae941885095f
+    component_id: block.system_messages_block
+    component_version: 0fd5234097704a5d
+    inputs:
+      label: 'Status messages'
+      label_display: '0'

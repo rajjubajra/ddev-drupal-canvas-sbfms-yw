@@ -1,0 +1,317 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import useSWR from 'swr';
+import { useState, useEffect } from 'react';
+import { JsonApiClient } from 'drupal-canvas';
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params';
+import PageTitle from '@/components/utl-page-title';
+import Button from '@/components/utl-button';
+/* --------------------------------------------------
+   Drupal JSON:API Client
+-------------------------------------------------- */ const client = new JsonApiClient();
+export default function LedgerBook() {
+    var _data_find;
+    const [ledgerId, setLedgerId] = useState('');
+    useEffect(()=>{
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('ledgerId');
+        console.log('ledger Id : ', id);
+        setLedgerId(id);
+    }, []);
+    /* --------------------------------------------------
+     State: Date Filters (default = defined fiscal year)
+  -------------------------------------------------- */ const [datePickedFrom, setDatePickedFrom] = useState('');
+    const [datePickedTo, setDatePickedTo] = useState('');
+    const [dateFrom, setDateFrom] = useState('');
+    const [dateTo, setDateTo] = useState('');
+    /* --------------------------------------------------
+           Fetch: Financial Year
+        -------------------------------------------------- */ const { data: fy, error: fyError, isLoading: fyIsLoading } = useSWR([
+        'node--financial_year',
+        {
+            queryString: new DrupalJsonApiParams().addSort([
+                '-created'
+            ]).getQueryString()
+        }
+    ], ([type, options])=>client.getCollection(type, options));
+    useEffect(()=>{
+        if (datePickedFrom === undefined || datePickedFrom === '' && datePickedTo === undefined || datePickedTo === '') {
+            setDateFrom(fy[0].field_date_from);
+            setDateTo(fy[0].field_date_to);
+        } else {
+            setDateFrom(datePickedFrom);
+            setDateTo(datePickedTo);
+        }
+    }, [
+        fy
+    ]);
+    /* --------------------------------------------------
+     Fetch: Ledger Accounts
+  -------------------------------------------------- */ const { data, error, isLoading } = useSWR([
+        'node--accounting_ledger',
+        {
+            queryString: new DrupalJsonApiParams().addInclude([
+                'field_account_type'
+            ]).getQueryString()
+        }
+    ], ([type, options])=>client.getCollection(type, options));
+    /* --------------------------------------------------
+     Fetch: Journal Entries (date filtered)
+  -------------------------------------------------- */ const { data: journal, error: jnerror, isLoading: jnLoading } = useSWR([
+        'node--acc_journal_entry',
+        dateFrom,
+        dateTo,
+        {
+            queryString: new DrupalJsonApiParams().addInclude([
+                'field_debit_account',
+                'field_credit_account'
+            ]).addFilter('field_date', dateFrom, '>=').addFilter('field_date', dateTo, '<=').addSort([
+                'field_date'
+            ]).getQueryString()
+        }
+    ], ([type, , , options])=>client.getCollection(type, options));
+    /* --------------------------------------------------
+     Normalize Journal → Ledger Transactions
+  -------------------------------------------------- */ const [drledgerAccounts, setDrLedgerAccounts] = useState([]);
+    const [crledgerAccounts, setCrLedgerAccounts] = useState([]);
+    useEffect(()=>{
+        if (!journal) return;
+        const drArr = [];
+        const crArr = [];
+        journal.forEach((item)=>{
+            drArr.push({
+                id: item.id,
+                date: item.field_date,
+                nodeId: item.drupal_internal__nid,
+                ledgerId: item.field_debit_account.id,
+                transaction: item.title,
+                ledgerName: item.field_debit_account.field_ledger_account_name,
+                creditedLedger: item.field_credit_account.field_ledger_account_name,
+                typeName: item.field_debit_account.field_ledger_account_name,
+                drAmount: item.field_amount
+            });
+            crArr.push({
+                id: item.id,
+                date: item.field_date,
+                nodeId: item.drupal_internal__nid,
+                ledgerId: item.field_credit_account.id,
+                transaction: item.title,
+                ledgerName: item.field_credit_account.field_ledger_account_name,
+                debitedLedger: item.field_debit_account.field_ledger_account_name,
+                typeName: item.field_credit_account.field_ledger_account_name,
+                crAmount: item.field_amount
+            });
+        });
+        setDrLedgerAccounts(drArr);
+        setCrLedgerAccounts(crArr);
+    }, [
+        journal
+    ]);
+    /* --------------------------------------------------
+     Render States
+  -------------------------------------------------- */ if (error || jnerror) return 'An error has occurred.';
+    if (isLoading || jnLoading) return 'Loading...';
+    /* --------------------------------------------------
+     Render UI
+  -------------------------------------------------- */ return /*#__PURE__*/ _jsxs("div", {
+        children: [
+            /*#__PURE__*/ _jsxs("form", {
+                className: "flex flex-wrap gap-4 mb-6 p-4 border rounded",
+                onSubmit: (e)=>e.preventDefault(),
+                children: [
+                    /*#__PURE__*/ _jsxs("div", {
+                        children: [
+                            /*#__PURE__*/ _jsx("label", {
+                                className: "block text-sm font-semibold mb-1",
+                                children: "Date From"
+                            }),
+                            /*#__PURE__*/ _jsx("input", {
+                                type: "date",
+                                value: dateFrom,
+                                onChange: (e)=>setDateFrom(e.target.value),
+                                className: "border px-2 py-1 rounded"
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ _jsxs("div", {
+                        children: [
+                            /*#__PURE__*/ _jsx("label", {
+                                className: "block text-sm font-semibold mb-1",
+                                children: "Date To"
+                            }),
+                            /*#__PURE__*/ _jsx("input", {
+                                type: "date",
+                                value: dateTo,
+                                onChange: (e)=>setDateTo(e.target.value),
+                                className: "border px-2 py-1 rounded"
+                            })
+                        ]
+                    })
+                ]
+            }),
+            /*#__PURE__*/ _jsxs("div", {
+                className: "w-full flex justify-end gap-2",
+                children: [
+                    /*#__PURE__*/ _jsx("button", {
+                        onClick: ()=>window.history.back(),
+                        children: /*#__PURE__*/ _jsx(Button, {
+                            children: " ← Back "
+                        })
+                    }),
+                    /*#__PURE__*/ _jsx("a", {
+                        href: "/node/add/accounting_ledger",
+                        target: "_blank",
+                        children: /*#__PURE__*/ _jsx(Button, {
+                            children: "Create New Ledger"
+                        })
+                    })
+                ]
+            }),
+            ledgerId !== '' && /*#__PURE__*/ _jsxs("div", {
+                children: [
+                    /*#__PURE__*/ _jsx("div", {
+                        className: "flex justify-between",
+                        children: /*#__PURE__*/ _jsx(PageTitle, {
+                            title: (_data_find = data.find((i)=>i.id === ledgerId)) === null || _data_find === void 0 ? void 0 : _data_find.title,
+                            dateFrom: dateFrom,
+                            dateTo: dateTo
+                        })
+                    }),
+                    /*#__PURE__*/ _jsxs("div", {
+                        className: "grid md:grid-cols-2 grid-cols-1 gap-4 text-sm",
+                        children: [
+                            /*#__PURE__*/ _jsxs("div", {
+                                children: [
+                                    /*#__PURE__*/ _jsxs("div", {
+                                        className: "flex font-bold border-b",
+                                        children: [
+                                            /*#__PURE__*/ _jsx("div", {
+                                                className: "w-24",
+                                                children: "Date"
+                                            }),
+                                            /*#__PURE__*/ _jsx("div", {
+                                                className: "w-64",
+                                                children: "Description"
+                                            }),
+                                            /*#__PURE__*/ _jsx("div", {
+                                                className: "w-24",
+                                                children: "Dr Amount"
+                                            })
+                                        ]
+                                    }),
+                                    drledgerAccounts.filter((i)=>i.ledgerId === ledgerId).map((item)=>/*#__PURE__*/ _jsxs("div", {
+                                            className: "flex gap-2",
+                                            children: [
+                                                /*#__PURE__*/ _jsx("div", {
+                                                    className: "w-24",
+                                                    children: item.date
+                                                }),
+                                                /*#__PURE__*/ _jsx("div", {
+                                                    className: "w-64",
+                                                    children: /*#__PURE__*/ _jsxs("a", {
+                                                        href: `/acc-journal-entry/?nodeId=${item.nodeId}`,
+                                                        children: [
+                                                            item.transaction,
+                                                            /*#__PURE__*/ _jsx("br", {}),
+                                                            /*#__PURE__*/ _jsxs("span", {
+                                                                className: "text-xs relative -top-2",
+                                                                children: [
+                                                                    "cr : ",
+                                                                    item.creditedLedger
+                                                                ]
+                                                            })
+                                                        ]
+                                                    })
+                                                }),
+                                                /*#__PURE__*/ _jsx("div", {
+                                                    className: "w-24 text-right",
+                                                    children: item.drAmount
+                                                })
+                                            ]
+                                        }, item.id))
+                                ]
+                            }),
+                            /*#__PURE__*/ _jsxs("div", {
+                                children: [
+                                    /*#__PURE__*/ _jsxs("div", {
+                                        className: "flex font-bold border-b",
+                                        children: [
+                                            /*#__PURE__*/ _jsx("div", {
+                                                className: "w-24",
+                                                children: "Date"
+                                            }),
+                                            /*#__PURE__*/ _jsx("div", {
+                                                className: "w-64",
+                                                children: "Description"
+                                            }),
+                                            /*#__PURE__*/ _jsx("div", {
+                                                className: "w-24",
+                                                children: "Cr Amount"
+                                            })
+                                        ]
+                                    }),
+                                    crledgerAccounts.filter((i)=>i.ledgerId === ledgerId).map((item)=>/*#__PURE__*/ _jsxs("div", {
+                                            className: "flex gap-2",
+                                            children: [
+                                                /*#__PURE__*/ _jsx("div", {
+                                                    className: "w-24",
+                                                    children: item.date
+                                                }),
+                                                /*#__PURE__*/ _jsx("div", {
+                                                    className: "w-64",
+                                                    children: /*#__PURE__*/ _jsxs("a", {
+                                                        href: `/acc-journal-entry/?nodeId=${item.nodeId}`,
+                                                        children: [
+                                                            item.transaction,
+                                                            /*#__PURE__*/ _jsx("br", {}),
+                                                            /*#__PURE__*/ _jsxs("span", {
+                                                                className: "text-xs relative -top-2",
+                                                                children: [
+                                                                    "dr : ",
+                                                                    item.debitedLedger
+                                                                ]
+                                                            })
+                                                        ]
+                                                    })
+                                                }),
+                                                /*#__PURE__*/ _jsx("div", {
+                                                    className: "w-24 text-right",
+                                                    children: item.crAmount
+                                                })
+                                            ]
+                                        }, item.id))
+                                ]
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ _jsxs("div", {
+                        className: "grid grid-cols-2 gap-4 border-t border-b md:text-sm text-xs font-bold uppercase py-2",
+                        children: [
+                            /*#__PURE__*/ _jsxs("div", {
+                                className: "flex justify-between",
+                                children: [
+                                    /*#__PURE__*/ _jsx("div", {
+                                        children: "Debit Total"
+                                    }),
+                                    /*#__PURE__*/ _jsx("div", {
+                                        children: drledgerAccounts.filter((i)=>i.ledgerId === ledgerId).reduce((sum, i)=>sum + Number(i.drAmount || 0), 0).toFixed(2)
+                                    })
+                                ]
+                            }),
+                            /*#__PURE__*/ _jsxs("div", {
+                                className: "flex justify-between",
+                                children: [
+                                    /*#__PURE__*/ _jsx("div", {
+                                        children: "Credit Total"
+                                    }),
+                                    /*#__PURE__*/ _jsx("div", {
+                                        children: crledgerAccounts.filter((i)=>i.ledgerId === ledgerId).reduce((sum, i)=>sum + Number(i.crAmount || 0), 0).toFixed(2)
+                                    })
+                                ]
+                            })
+                        ]
+                    })
+                ]
+            })
+        ]
+    });
+}

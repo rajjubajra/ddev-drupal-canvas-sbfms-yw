@@ -1,0 +1,18 @@
+uuid: 118a7020-bcda-4a06-b10a-2c602140a606
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.js_component.sales-invoice-form
+active_version: 8fe3be948e0194e1
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions: {  }
+    fallback_metadata:
+      slot_definitions: {  }
+label: sales-invoice-form
+id: js.sales-invoice-form
+provider: null
+source: js
+source_local_id: sales-invoice-form

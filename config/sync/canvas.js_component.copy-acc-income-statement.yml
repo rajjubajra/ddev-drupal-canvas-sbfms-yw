@@ -1,0 +1,693 @@
+uuid: d7e0ae69-6cf0-4bca-892f-278feed910d2
+langcode: en
+status: false
+dependencies:
+  enforced:
+    config:
+      - canvas.js_component.utl-button
+      - canvas.js_component.utl-page-title
+      - canvas.js_component.utl-amount
+machineName: copy-acc-income-statement
+name: copy-acc-income-statement
+required: {  }
+props: {  }
+slots: {  }
+js:
+  original: |
+    import { useState, useEffect } from 'react';
+    import useSWR from 'swr';
+
+    import { JsonApiClient, FormattedText, Image } from 'drupal-canvas';
+
+    import { DrupalJsonApiParams } from 'drupal-jsonapi-params';
+
+    import Button from '@/components/utl-button';
+    import PageTitle from '@/components/utl-page-title';
+    import Amount from '@/components/utl-amount';
+
+    /* --------------------------------------------------
+       Drupal JSON:API Client
+    -------------------------------------------------- */
+    const client = new JsonApiClient();
+
+
+
+    export default function JournalEntriesList() {
+
+
+       /* --------------------------------------------------
+         State: Date Filters (default = defined fiscal year)
+      -------------------------------------------------- */
+
+      const [datePickedFrom, setDatePickedFrom] = useState('');
+      const [datePickedTo, setDatePickedTo] = useState('');
+      
+      const [dateFrom, setDateFrom] = useState('');
+      const [dateTo, setDateTo] = useState('');
+
+
+          /* --------------------------------------------------
+               Fetch: Financial Year
+            -------------------------------------------------- */
+            const { data:fy, error:fyError, isLoading:fyIsLoading } = useSWR(
+              [
+                'node--financial_year',
+                {
+                  queryString: new DrupalJsonApiParams()
+                    .addSort(['-created'])
+                    .getQueryString(),
+                },
+              ],
+              ([type, options]) => client.getCollection(type, options)
+            );
+          
+            
+          
+             useEffect(() => {
+          
+               if(datePickedFrom === undefined || datePickedFrom === '' 
+                  && datePickedTo === undefined || datePickedTo === '')
+               {
+                 setDateFrom(fy[0].field_date_from);
+                 setDateTo(fy[0].field_date_to);
+               }else{
+                 setDateFrom(datePickedFrom);
+                 setDateTo(datePickedTo);
+               }
+               
+             },[fy])
+
+
+
+
+       /* --------------------------------------------------
+         Fetch: Taxonomy Term (account_types)
+      -------------------------------------------------- */
+      const { data:accType, error:accTypeError, isLoading:accTypeIsLoading } = useSWR(
+        [
+          'taxonomy_term--account_types',
+          {
+            queryString: new DrupalJsonApiParams()
+              .getQueryString(),
+          },
+        ],
+        ([type, , , options]) => client.getCollection(type, options)
+      );
+
+      /* --------------------------------------------------
+         Fetch: Journal Entries (filtered by date range)
+      -------------------------------------------------- */
+      const { data, error, isLoading } = useSWR(
+        [
+          'node--journal_entry',
+          dateFrom,
+          dateTo,
+          {
+            queryString: new DrupalJsonApiParams()
+              .addInclude([
+                'field_credit_entry.field_ledger_account_name.field_account_type',
+                'field_debit_entry.field_ledger_account_name.field_account_type',
+              ])
+
+              //DATE FROM
+              .addFilter('field_date', dateFrom, '>=')
+              //DATE TO
+              .addFilter('field_date', dateTo, '<=')
+
+              //SORT BY DESCENDING field_date
+              .addSort(['-field_date'])
+              .getQueryString(),
+          },
+        ],
+        ([type, , , options]) => client.getCollection(type, options)
+      );
+
+
+    /**----------------------------------------------
+      Debit and Credit items grouped Array
+    -------------------------------------------------**/
+      
+      const [drGrouped, setDrGrouped] = useState([])
+      const [crGrouped, setCrGrouped] = useState([])
+
+         useEffect(() => {
+    /** -----------------------------------------
+      Credit Items - Grouped by Taxnomy Term(Acount Type)
+        -----------------------------------------  **/
+          const drGrouped = accType.map((item) => (
+               {
+                  'taxonomyId': item.id,
+                  'taxonomyName': item.name,
+                  'items': data
+                    .filter(jr=> jr.field_debit_entry.field_ledger_account_name.field_account_type.id === item.id)
+                    .map(jr => (
+                      { 
+                        'id': jr.id,
+                        'ledgerId': jr.field_debit_entry.field_ledger_account_name.id,
+                        'nodeId': jr.drupal_internal__nid,
+                        'title': jr.title,
+                        'dr_amount': jr.field_debit_entry.field_debit_amount
+                      }) )
+                }))
+           console.log('DrGrouped', drGrouped);
+           setDrGrouped(drGrouped);
+
+    /** -----------------------------------------
+      Credit Items - Grouped by Taxnomy Term(Acount Type)
+        -----------------------------------------  **/
+           const crGrouped = accType.map((item) => (
+                 {
+                  'taxonomyId': item.id,
+                  'taxonomyName': item.name,
+                  'items': data
+                    .filter(jr=> jr.field_credit_entry.field_ledger_account_name.field_account_type.id === item.id)
+                    .map(jr => (
+                      { 
+                        'id': jr.id,
+                        'nodeId': jr.drupal_internal__nid,
+                        'ledgerId': jr.field_credit_entry.field_ledger_account_name.id,
+                        'title': jr.title,
+                        'cr_amount': jr.field_credit_entry.field_credit_amount
+                      }) )
+                }))
+           console.log('crGrouped', crGrouped);
+           setCrGrouped(crGrouped);
+         },[data])
+
+
+
+
+      /** HELPER: SUM AMOUNT **/
+
+      const sum = (items, field) =>
+      items.reduce((t, i) => t + Number(i[field] || 0), 0);
+
+
+      /** GET TOTAL BY TAXONOMY **/
+
+        const getDebitTotalByTaxonomy = (taxonomyName) => {
+          const group = drGrouped.find(g => g.taxonomyName === taxonomyName);
+          return group ? sum(group.items, 'dr_amount') : 0;
+        };
+
+        const getCreditTotalByTaxonomy = (taxonomyName) => {
+          const group = crGrouped.find(g => g.taxonomyName === taxonomyName);
+          return group ? sum(group.items, 'cr_amount') : 0;
+        };
+
+      /** INCOME STATEMENT CALCULATION (COARE LOGIC)**/
+
+
+          const totalRevenue = getCreditTotalByTaxonomy('Revenue');
+          
+          const contraRevenue = getDebitTotalByTaxonomy('Contra Revenue');
+          const netRevenue = totalRevenue - contraRevenue;
+          
+          const cogs = getDebitTotalByTaxonomy('Expenses-COGS');
+          const grossProfit = netRevenue - cogs;
+          
+          const operatingExpenses = getDebitTotalByTaxonomy('Expenses');
+          
+          const taxExpense = getDebitTotalByTaxonomy('Expenses-tax');
+          
+          const netProfit = grossProfit - operatingExpenses - taxExpense;
+
+
+
+      const incomeStatement = {
+      revenue: totalRevenue,
+      contraRevenue,
+      netRevenue,
+      cogs,
+      grossProfit,
+      operatingExpenses,
+      taxExpense,
+      netProfit
+    };
+
+
+
+
+      
+        
+      /* --------------------------------------------------
+         Render States
+      -------------------------------------------------- */
+      if (error) return 'An error has occurred.';
+      if (isLoading) return 'Loading...';
+
+      /* --------------------------------------------------
+         Render UI
+      -------------------------------------------------- */
+      return (
+        <div>
+          <PageTitle title="Income Statement" dateFrom={dateFrom} dateTo={dateTo} />
+
+
+             {/* Date Filter Form */}
+          <form
+            className="flex flex-wrap gap-4 items-end mb-6 p-4 border rounded"
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Date From
+              </label>
+              <input
+                type="date"
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+                className="border px-2 py-1 rounded"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Date To
+              </label>
+              <input
+                type="date"
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+                className="border px-2 py-1 rounded"
+              />
+            </div>
+          </form>
+
+          
+          
+          <div className='mb-20 border m-2 p-4'>
+            
+          
+            <p>Revenue: {totalRevenue.toFixed(2)}</p>
+            <p>Less: Contra Revenue: {contraRevenue.toFixed(2)}</p>
+          
+            <hr />
+            <p><strong>Net Revenue: {netRevenue.toFixed(2)}</strong></p>
+          
+            <p>Cost of Goods Sold: {cogs.toFixed(2)}</p>
+            <p><strong>Gross Profit: {grossProfit.toFixed(2)}</strong></p>
+          
+            <p>Operating Expenses: {operatingExpenses.toFixed(2)}</p>
+            <p>Tax Expense: {taxExpense.toFixed(2)}</p>
+          
+            <hr />
+            <p><strong>Net Profit</strong>: {netProfit.toFixed(2)}</p>
+          </div>
+
+
+
+
+
+
+          <PageTitle title='Ledger Account Totals' dateFrom={dateFrom} dateTo={dateTo} />
+
+          <div className='text-xl uppercase'>Debit Account Types:</div>
+          { 
+             drGrouped && drGrouped.map((item) => {
+               return <div key={item.id} className='my-2 border-b border-slate-300'>
+                  <div className='text-sm font-bold uppercase grid grid-cols-2 gap-2'>
+                   
+                   <div>{item.taxonomyName}</div>
+                   <div>
+                     {
+                       item.items?.reduce((sum, i) => sum + Number(i.dr_amount || 0), 0).toFixed(2)
+                     }
+                   </div>
+                 </div>
+                 {
+                   item.items?.map(jr => {
+                     return <div key={jr.id} className='grid grid-cols-2 gap-2'> 
+                       <div><a href={`/ledger-account/?ledgerId=${jr.ledgerId}`}>{jr.title}</a></div>
+                       <div>{jr.dr_amount}</div>
+                     </div>
+                   })
+                 }
+               </div>
+             })  
+          }
+          <div className='mt-10 text-xl'>Credit Account Types:</div>
+          {
+             crGrouped && crGrouped.map((item) => {
+               return <div key={item.id} className='my-2 border-b border-slate-300'>
+                 <div className='text-sm font-bold uppercase grid grid-cols-2 gap-2'>
+                   <div>{item.taxonomyName}</div>
+                   <div>
+                     {
+                       item.items?.reduce((sum, i) => sum + Number(i.cr_amount || 0), 0).toFixed(2)
+                     }
+                   </div>
+                 </div>
+                 {
+                   item.items?.map(jr => {
+                     return <><div key={jr.id} className='grid grid-cols-2 gap-2'>           
+                       <div><a href={`/ledger-account/?ledgerId=${jr.ledgerId}`}>{jr.title}</a></div>
+                       <div>{jr.cr_amount}</div>
+                     </div>
+                     </>
+                   })
+                 }
+               </div>
+             })  
+          }
+          
+
+        </div>
+      );
+    }
+  compiled: |
+    import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+    import { useState, useEffect } from 'react';
+    import useSWR from 'swr';
+    import { JsonApiClient, FormattedText, Image } from 'drupal-canvas';
+    import { DrupalJsonApiParams } from 'drupal-jsonapi-params';
+    import Button from '@/components/utl-button';
+    import PageTitle from '@/components/utl-page-title';
+    import Amount from '@/components/utl-amount';
+    /* --------------------------------------------------
+       Drupal JSON:API Client
+    -------------------------------------------------- */ const client = new JsonApiClient();
+    export default function JournalEntriesList() {
+        /* --------------------------------------------------
+         State: Date Filters (default = defined fiscal year)
+      -------------------------------------------------- */ const [datePickedFrom, setDatePickedFrom] = useState('');
+        const [datePickedTo, setDatePickedTo] = useState('');
+        const [dateFrom, setDateFrom] = useState('');
+        const [dateTo, setDateTo] = useState('');
+        /* --------------------------------------------------
+               Fetch: Financial Year
+            -------------------------------------------------- */ const { data: fy, error: fyError, isLoading: fyIsLoading } = useSWR([
+            'node--financial_year',
+            {
+                queryString: new DrupalJsonApiParams().addSort([
+                    '-created'
+                ]).getQueryString()
+            }
+        ], ([type, options])=>client.getCollection(type, options));
+        useEffect(()=>{
+            if (datePickedFrom === undefined || datePickedFrom === '' && datePickedTo === undefined || datePickedTo === '') {
+                setDateFrom(fy[0].field_date_from);
+                setDateTo(fy[0].field_date_to);
+            } else {
+                setDateFrom(datePickedFrom);
+                setDateTo(datePickedTo);
+            }
+        }, [
+            fy
+        ]);
+        /* --------------------------------------------------
+         Fetch: Taxonomy Term (account_types)
+      -------------------------------------------------- */ const { data: accType, error: accTypeError, isLoading: accTypeIsLoading } = useSWR([
+            'taxonomy_term--account_types',
+            {
+                queryString: new DrupalJsonApiParams().getQueryString()
+            }
+        ], ([type, , , options])=>client.getCollection(type, options));
+        /* --------------------------------------------------
+         Fetch: Journal Entries (filtered by date range)
+      -------------------------------------------------- */ const { data, error, isLoading } = useSWR([
+            'node--journal_entry',
+            dateFrom,
+            dateTo,
+            {
+                queryString: new DrupalJsonApiParams().addInclude([
+                    'field_credit_entry.field_ledger_account_name.field_account_type',
+                    'field_debit_entry.field_ledger_account_name.field_account_type'
+                ])//DATE FROM
+                .addFilter('field_date', dateFrom, '>=')//DATE TO
+                .addFilter('field_date', dateTo, '<=')//SORT BY DESCENDING field_date
+                .addSort([
+                    '-field_date'
+                ]).getQueryString()
+            }
+        ], ([type, , , options])=>client.getCollection(type, options));
+        /**----------------------------------------------
+      Debit and Credit items grouped Array
+    -------------------------------------------------**/ const [drGrouped, setDrGrouped] = useState([]);
+        const [crGrouped, setCrGrouped] = useState([]);
+        useEffect(()=>{
+            /** -----------------------------------------
+      Credit Items - Grouped by Taxnomy Term(Acount Type)
+        -----------------------------------------  **/ const drGrouped = accType.map((item)=>({
+                    'taxonomyId': item.id,
+                    'taxonomyName': item.name,
+                    'items': data.filter((jr)=>jr.field_debit_entry.field_ledger_account_name.field_account_type.id === item.id).map((jr)=>({
+                            'id': jr.id,
+                            'ledgerId': jr.field_debit_entry.field_ledger_account_name.id,
+                            'nodeId': jr.drupal_internal__nid,
+                            'title': jr.title,
+                            'dr_amount': jr.field_debit_entry.field_debit_amount
+                        }))
+                }));
+            console.log('DrGrouped', drGrouped);
+            setDrGrouped(drGrouped);
+            /** -----------------------------------------
+      Credit Items - Grouped by Taxnomy Term(Acount Type)
+        -----------------------------------------  **/ const crGrouped = accType.map((item)=>({
+                    'taxonomyId': item.id,
+                    'taxonomyName': item.name,
+                    'items': data.filter((jr)=>jr.field_credit_entry.field_ledger_account_name.field_account_type.id === item.id).map((jr)=>({
+                            'id': jr.id,
+                            'nodeId': jr.drupal_internal__nid,
+                            'ledgerId': jr.field_credit_entry.field_ledger_account_name.id,
+                            'title': jr.title,
+                            'cr_amount': jr.field_credit_entry.field_credit_amount
+                        }))
+                }));
+            console.log('crGrouped', crGrouped);
+            setCrGrouped(crGrouped);
+        }, [
+            data
+        ]);
+        /** HELPER: SUM AMOUNT **/ const sum = (items, field)=>items.reduce((t, i)=>t + Number(i[field] || 0), 0);
+        /** GET TOTAL BY TAXONOMY **/ const getDebitTotalByTaxonomy = (taxonomyName)=>{
+            const group = drGrouped.find((g)=>g.taxonomyName === taxonomyName);
+            return group ? sum(group.items, 'dr_amount') : 0;
+        };
+        const getCreditTotalByTaxonomy = (taxonomyName)=>{
+            const group = crGrouped.find((g)=>g.taxonomyName === taxonomyName);
+            return group ? sum(group.items, 'cr_amount') : 0;
+        };
+        /** INCOME STATEMENT CALCULATION (COARE LOGIC)**/ const totalRevenue = getCreditTotalByTaxonomy('Revenue');
+        const contraRevenue = getDebitTotalByTaxonomy('Contra Revenue');
+        const netRevenue = totalRevenue - contraRevenue;
+        const cogs = getDebitTotalByTaxonomy('Expenses-COGS');
+        const grossProfit = netRevenue - cogs;
+        const operatingExpenses = getDebitTotalByTaxonomy('Expenses');
+        const taxExpense = getDebitTotalByTaxonomy('Expenses-tax');
+        const netProfit = grossProfit - operatingExpenses - taxExpense;
+        const incomeStatement = {
+            revenue: totalRevenue,
+            contraRevenue,
+            netRevenue,
+            cogs,
+            grossProfit,
+            operatingExpenses,
+            taxExpense,
+            netProfit
+        };
+        /* --------------------------------------------------
+         Render States
+      -------------------------------------------------- */ if (error) return 'An error has occurred.';
+        if (isLoading) return 'Loading...';
+        /* --------------------------------------------------
+         Render UI
+      -------------------------------------------------- */ return /*#__PURE__*/ _jsxs("div", {
+            children: [
+                /*#__PURE__*/ _jsx(PageTitle, {
+                    title: "Income Statement",
+                    dateFrom: dateFrom,
+                    dateTo: dateTo
+                }),
+                /*#__PURE__*/ _jsxs("form", {
+                    className: "flex flex-wrap gap-4 items-end mb-6 p-4 border rounded",
+                    onSubmit: (e)=>e.preventDefault(),
+                    children: [
+                        /*#__PURE__*/ _jsxs("div", {
+                            children: [
+                                /*#__PURE__*/ _jsx("label", {
+                                    className: "block text-sm font-semibold mb-1",
+                                    children: "Date From"
+                                }),
+                                /*#__PURE__*/ _jsx("input", {
+                                    type: "date",
+                                    value: dateFrom,
+                                    onChange: (e)=>setDateFrom(e.target.value),
+                                    className: "border px-2 py-1 rounded"
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsxs("div", {
+                            children: [
+                                /*#__PURE__*/ _jsx("label", {
+                                    className: "block text-sm font-semibold mb-1",
+                                    children: "Date To"
+                                }),
+                                /*#__PURE__*/ _jsx("input", {
+                                    type: "date",
+                                    value: dateTo,
+                                    onChange: (e)=>setDateTo(e.target.value),
+                                    className: "border px-2 py-1 rounded"
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                /*#__PURE__*/ _jsxs("div", {
+                    className: "mb-20 border m-2 p-4",
+                    children: [
+                        /*#__PURE__*/ _jsxs("p", {
+                            children: [
+                                "Revenue: ",
+                                totalRevenue.toFixed(2)
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsxs("p", {
+                            children: [
+                                "Less: Contra Revenue: ",
+                                contraRevenue.toFixed(2)
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsx("hr", {}),
+                        /*#__PURE__*/ _jsx("p", {
+                            children: /*#__PURE__*/ _jsxs("strong", {
+                                children: [
+                                    "Net Revenue: ",
+                                    netRevenue.toFixed(2)
+                                ]
+                            })
+                        }),
+                        /*#__PURE__*/ _jsxs("p", {
+                            children: [
+                                "Cost of Goods Sold: ",
+                                cogs.toFixed(2)
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsx("p", {
+                            children: /*#__PURE__*/ _jsxs("strong", {
+                                children: [
+                                    "Gross Profit: ",
+                                    grossProfit.toFixed(2)
+                                ]
+                            })
+                        }),
+                        /*#__PURE__*/ _jsxs("p", {
+                            children: [
+                                "Operating Expenses: ",
+                                operatingExpenses.toFixed(2)
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsxs("p", {
+                            children: [
+                                "Tax Expense: ",
+                                taxExpense.toFixed(2)
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsx("hr", {}),
+                        /*#__PURE__*/ _jsxs("p", {
+                            children: [
+                                /*#__PURE__*/ _jsx("strong", {
+                                    children: "Net Profit"
+                                }),
+                                ": ",
+                                netProfit.toFixed(2)
+                            ]
+                        })
+                    ]
+                }),
+                /*#__PURE__*/ _jsx(PageTitle, {
+                    title: "Ledger Account Totals",
+                    dateFrom: dateFrom,
+                    dateTo: dateTo
+                }),
+                /*#__PURE__*/ _jsx("div", {
+                    className: "text-xl uppercase",
+                    children: "Debit Account Types:"
+                }),
+                drGrouped && drGrouped.map((item)=>{
+                    var _item_items, _item_items1;
+                    return /*#__PURE__*/ _jsxs("div", {
+                        className: "my-2 border-b border-slate-300",
+                        children: [
+                            /*#__PURE__*/ _jsxs("div", {
+                                className: "text-sm font-bold uppercase grid grid-cols-2 gap-2",
+                                children: [
+                                    /*#__PURE__*/ _jsx("div", {
+                                        children: item.taxonomyName
+                                    }),
+                                    /*#__PURE__*/ _jsx("div", {
+                                        children: (_item_items = item.items) === null || _item_items === void 0 ? void 0 : _item_items.reduce((sum, i)=>sum + Number(i.dr_amount || 0), 0).toFixed(2)
+                                    })
+                                ]
+                            }),
+                            (_item_items1 = item.items) === null || _item_items1 === void 0 ? void 0 : _item_items1.map((jr)=>{
+                                return /*#__PURE__*/ _jsxs("div", {
+                                    className: "grid grid-cols-2 gap-2",
+                                    children: [
+                                        /*#__PURE__*/ _jsx("div", {
+                                            children: /*#__PURE__*/ _jsx("a", {
+                                                href: `/ledger-account/?ledgerId=${jr.ledgerId}`,
+                                                children: jr.title
+                                            })
+                                        }),
+                                        /*#__PURE__*/ _jsx("div", {
+                                            children: jr.dr_amount
+                                        })
+                                    ]
+                                }, jr.id);
+                            })
+                        ]
+                    }, item.id);
+                }),
+                /*#__PURE__*/ _jsx("div", {
+                    className: "mt-10 text-xl",
+                    children: "Credit Account Types:"
+                }),
+                crGrouped && crGrouped.map((item)=>{
+                    var _item_items, _item_items1;
+                    return /*#__PURE__*/ _jsxs("div", {
+                        className: "my-2 border-b border-slate-300",
+                        children: [
+                            /*#__PURE__*/ _jsxs("div", {
+                                className: "text-sm font-bold uppercase grid grid-cols-2 gap-2",
+                                children: [
+                                    /*#__PURE__*/ _jsx("div", {
+                                        children: item.taxonomyName
+                                    }),
+                                    /*#__PURE__*/ _jsx("div", {
+                                        children: (_item_items = item.items) === null || _item_items === void 0 ? void 0 : _item_items.reduce((sum, i)=>sum + Number(i.cr_amount || 0), 0).toFixed(2)
+                                    })
+                                ]
+                            }),
+                            (_item_items1 = item.items) === null || _item_items1 === void 0 ? void 0 : _item_items1.map((jr)=>{
+                                return /*#__PURE__*/ _jsx(_Fragment, {
+                                    children: /*#__PURE__*/ _jsxs("div", {
+                                        className: "grid grid-cols-2 gap-2",
+                                        children: [
+                                            /*#__PURE__*/ _jsx("div", {
+                                                children: /*#__PURE__*/ _jsx("a", {
+                                                    href: `/ledger-account/?ledgerId=${jr.ledgerId}`,
+                                                    children: jr.title
+                                                })
+                                            }),
+                                            /*#__PURE__*/ _jsx("div", {
+                                                children: jr.cr_amount
+                                            })
+                                        ]
+                                    }, jr.id)
+                                });
+                            })
+                        ]
+                    }, item.id);
+                })
+            ]
+        });
+    }
+css:
+  original: ''
+  compiled: |
+    /*! tailwindcss v4.1.13 | MIT License | https://tailwindcss.com */
+dataDependencies:
+  drupalSettings:
+    - v0.baseUrl
+    - v0.jsonapiSettings

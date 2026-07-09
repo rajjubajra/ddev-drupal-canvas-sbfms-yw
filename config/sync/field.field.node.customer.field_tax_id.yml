@@ -1,0 +1,19 @@
+uuid: a578ebf7-d5d6-499c-bf2a-d8ca43af9228
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tax_id
+    - node.type.customer
+id: node.customer.field_tax_id
+field_name: field_tax_id
+entity_type: node
+bundle: customer
+label: 'Tax Id'
+description: 'VAT / PAN if applicable.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

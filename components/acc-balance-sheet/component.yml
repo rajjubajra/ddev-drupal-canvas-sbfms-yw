@@ -1,0 +1,7 @@
+name: acc-balance-sheet
+machineName: acc-balance-sheet
+status: false
+required: []
+props:
+  properties: []
+slots: []

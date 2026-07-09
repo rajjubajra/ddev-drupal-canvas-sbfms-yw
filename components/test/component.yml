@@ -1,0 +1,7 @@
+name: test
+machineName: test
+status: false
+required: []
+props:
+  properties: []
+slots: []

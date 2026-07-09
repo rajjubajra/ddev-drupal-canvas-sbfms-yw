@@ -1,0 +1,12 @@
+uuid: a43792ca-7580-4703-9795-47d22b7691aa
+langcode: en
+status: true
+dependencies: {  }
+name: 'Code copy'
+configEntityTypeId: js_component
+weight: 0
+items:
+  - day-book-by-date-range-copy
+  - list-journal-by-date-range-copy
+  - list-ledger-by-date-range-copy
+  - trail-balance-by-date-range-copy

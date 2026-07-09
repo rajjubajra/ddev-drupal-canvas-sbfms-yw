@@ -1,0 +1,882 @@
+uuid: 60aec243-e784-4801-8022-b1ca53bd7798
+langcode: en
+status: false
+dependencies:
+  enforced:
+    config:
+      - canvas.js_component.utl-page-title
+      - canvas.js_component.utl-button
+      - canvas.js_component.utl-amount-total
+      - canvas.js_component.utl-amount
+machineName: sales-invoice-post-journal
+name: sales-invoice-post-journal
+required: {  }
+props: {  }
+slots: {  }
+js:
+  original: |
+    import { useState, useEffect } from 'react';
+    import useSWR from 'swr';
+    import { JsonApiClient } from 'drupal-canvas';
+    import { DrupalJsonApiParams } from 'drupal-jsonapi-params';
+    import { FormattedText } from 'drupal-canvas';
+
+    import PageTitle from '@/components/utl-page-title';
+    import Button from '@/components/utl-button';
+    import AmountTotal from '@/components/utl-amount-total';
+    import Amount from '@/components/utl-amount';
+
+
+
+
+    const client = new JsonApiClient();
+
+
+
+
+
+
+    export default function sales_invoice_copy() {
+
+
+
+     /**--------------------------------------------------------------------------------------------
+      * Extract UUID from URL query parameters and fetch the corresponding purchase data via JSON:API.
+      * Then display the purchase details and provide a button to post a journal entry for the purchase.
+      -------------------------------------------------------------------------------------------*/
+      const [uuid, setUuid] = useState(null);
+      const [journalEntryNodeId, setJournalEntryNodeId] = useState(null);
+      const [isCheckingJournal, setIsCheckingJournal] = useState(false);
+
+      // Function to check for existing journal entry
+      const checkJournalEntry = (uuidParam) => {
+        console.log('Checking journal entry for UUID:', uuidParam);
+        if (!uuidParam) return;
+
+        setIsCheckingJournal(true);
+        setJournalEntryNodeId(null);
+
+        // First get the purchase nid from UUID
+        fetch(`${window.location.origin}/jsonapi/node/sales_book/${uuidParam}`)
+          .then(res => res.json())
+          .then(purchaseData => {
+            const purchaseNid = purchaseData?.data?.attributes?.drupal_internal__nid;
+            if (!purchaseNid) {
+              setIsCheckingJournal(false);
+              return;
+            }
+            
+            // Then check if journal entry exists
+            return fetch(`/jsonapi/node/acc_journal_entry?filter[field_purchase_sale_reference_id]=${'sales' + ' ' + String(uuidParam)}`)
+              .then(res => res.json())
+              .then(result => {
+                if (result?.data?.length > 0) {
+                  setJournalEntryNodeId(result.data[0].attributes.drupal_internal__nid);
+                }
+                setIsCheckingJournal(false);
+              });
+          })
+          .catch(err => {
+            console.error('Error checking journal entry:', err);
+            setIsCheckingJournal(false);
+          });
+      };
+
+
+
+
+
+
+
+
+
+    /**----------------------------------------------------------------
+     *  UUID FROM THE SALES LIST
+     ------------------------------------------------------------------*/  
+        const [nodeId, setNodeId] = useState('');
+          
+          useEffect(() => {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('nodeId');
+            console.log('Node Id : ',id);
+              setNodeId(id);
+          },[])
+
+    /**----------------------------------------------------------------------
+     * FETCH data for invoice copy from content type 'invoice'
+     ------------------------------------------------------------------------*/
+          const { data, error, isLoading } = useSWR(
+                [
+                  'node--invoice',
+                  {
+                    queryString: new DrupalJsonApiParams()
+                      .addInclude([
+                        'field_sales_invoice_items',
+                        'field_customer_id'
+                        ])
+                      .addFilter('drupal_internal__nid', nodeId, '=') // Exclude current article by uuid.
+                      .getQueryString(),
+                  },
+                ],
+                ([type, options]) => client.getCollection(type, options),
+          );
+          console.log('DATA', data, error, isLoading);
+
+
+
+     // Get CSRF token
+      async function getCsrfToken() {
+      try {
+        const response = await fetch("/session/token", {
+          method: "GET",
+          credentials: "include"
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to get CSRF token: ${response.status}`);
+        }
+        
+        return await response.text();
+      } catch (error) {
+        console.error("CSRF token error:", error);
+        throw error;
+      }
+    }
+
+
+    /**
+     * Create Journal Entries (Drupal fields aligned)
+     * this function is generated by chatgpt
+        */
+    async function createJournalEntries(invoiceId) {
+
+      
+
+      try {
+        const token = await getCsrfToken();
+        const today = new Date().toISOString().split('T')[0];
+
+        // ✅ Calculate totals
+        const totalAmount = productItems.reduce(
+          (sum, item) => sum + (item.price * item.quantity),0);
+
+        // (Optional) If you have cost field
+        const totalCOGS = productItems.reduce(
+          (sum, item) => sum + ((item.cost_price || 0) * item.quantity),0);
+
+        const refString = `${invoiceId}-${today}`;
+
+        // Get nodeId from the first product item
+        const nodeId = productItems[0]?.nodeId;
+
+        // Only create journal entries if we have a valid nodeId
+        if (!nodeId) {
+          console.warn('No nodeId available for journal entries');
+          return;
+        }
+
+        console.log('total Amount', totalAmount, 'total COGS', totalCOGS, 'node id', nodeId, 'refString', refString);
+        
+        // -------- Revenue Entry --------
+        const revenueEntry = {
+          data: {
+            type: 'node--acc_journal_entry',
+            attributes: {
+              title: `Invoice Revenue - ${invoiceId}`,
+              field_amount: totalAmount,
+              field_date: today,
+              field_purchase_sale_reference_id: nodeId,
+              field_purchase_sale_reference_ty: 'invoice',
+              field_description: {
+                value: `Revenue for Invoice ${nodeId}`,
+                format: 'plain_text'
+              },
+              field_comment: {
+                value: `Auto generated consolidated revenue entry`,
+                format: 'plain_text'
+              }
+            },
+            relationships: {
+              field_debit_account: {
+                data: {
+                  type: "node--accounting_ledger",
+                  id: "91ff33c2-6d0d-4876-9746-e1551585f29e" // Accounts Receivable / Cash
+                }
+              },
+              field_credit_account: {
+                data: {
+                  type: "node--accounting_ledger",
+                  id: "4f7d0b0f-0a5a-421d-ab45-47779da5ecc0" // Sales Revenue
+                }
+              }
+            }
+          }
+        };
+
+        // -------- COGS Entry --------
+        const cogsEntry = {
+          data: {
+            type: 'node--acc_journal_entry',
+            attributes: {
+              title: `COGS - ${invoiceId}`,
+              field_amount: totalCOGS,
+              field_date: today,
+              field_purchase_sale_reference_id: nodeId,
+              field_purchase_sale_reference_ty: 'invoice',
+              field_description: {
+                value: `COGS for Invoice ${nodeId}`,
+                format: 'plain_text'
+              },
+              field_comment: {
+                value: `Auto generated consolidated COGS entry`,
+                format: 'plain_text'
+              }
+            },
+            relationships: {
+              field_debit_account: {
+                data: {
+                  type: "node--accounting_ledger",
+                  id: "d030ea84-af4f-4f2e-a1a7-313b560181fc" // COGS Expense
+                }
+              },
+              field_credit_account: {
+                data: {
+                  type: "node--accounting_ledger",
+                  id: "c5343609-65ee-4e0d-926e-20104956edd9" // Inventory
+                }
+              }
+            }
+          }
+        };
+
+        // -------- POST Revenue --------
+        const res1 = await fetch('/jsonapi/node/acc_journal_entry', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/vnd.api+json',
+            'Accept': 'application/vnd.api+json',
+            'X-CSRF-Token': token
+          },
+          credentials: 'include',
+          body: JSON.stringify(revenueEntry)
+        });
+
+        const data1 = await res1.json();
+        console.log('Revenue entry response:', data1);
+
+        // -------- POST COGS --------
+        if (totalCOGS > 0) {
+          const res2 = await fetch('/jsonapi/node/acc_journal_entry', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/vnd.api+json',
+              'Accept': 'application/vnd.api+json',
+              'X-CSRF-Token': token
+            },
+            credentials: 'include',
+            body: JSON.stringify(cogsEntry)
+          });
+
+          const data2 = await res2.json();
+          console.log('COGS entry response:', data2);
+        }
+
+
+        // ✅ Redirect commented out - can be enabled if needed
+        /** 
+        if (data2?.data?.attributes?.drupal_internal__nid) {
+          window.location.href = `/acc-journal-entry?nodeId=${data1.data.attributes.drupal_internal__nid},${data2.data.attributes.drupal_internal__nid}`;
+        }
+        */
+
+      } catch (err) {
+        console.error('Journal error:', err);
+        throw err;
+      }
+    }
+
+
+
+
+       
+      if(error) return <div>Loading error...</div>
+      if(isLoading) return <div>Loading ...</div>
+
+      return (
+        <div>
+          <div className='flex justify-end'>
+            <Button>
+            <button className='cursor-pointer' onClick={() => window.history.back()}>
+                 ← Back 
+            </button>
+            </Button>
+          </div>
+
+          
+          <PageTitle title='Invoice - Post Journal Entry' />
+
+          <div>
+            
+        {/** Invoice number, date ---------------------------------------------------------- */}
+            <div className='flex justify-between py-4 border-b border-slate-300'>
+              <div>
+                <div className='font-bold'>Invoice - {data[0].field_invoice_number}</div>
+                <div className='text-xs'>{data[0].field_invoice_date}</div>
+              </div>
+              <div>
+                <div className='text-xs'>{data[0].field_customer_id.field_customer_code}</div>
+              </div>
+            </div>
+
+
+        {/** Client Details ----------------------------------------------------------------*/}
+            <div className='grid md:grid-cols-2 py-4 border-b border-slate-300'>
+              <div>
+                  <div className='font-semibold'>{data[0].field_customer_id.title}</div>
+                  <div className='text-xs'>
+                    <FormattedText>
+                      {data[0].field_customer_id.field_address.value}
+                    </FormattedText>
+                  </div>
+              </div>
+              
+              <div className='text-xs border-l border-slate-300 pl-4'>
+                  <div className='flex gap-2'>
+                    {data[0].field_customer_id.field_phone_number?.map((item) => <div>{item}</div>)}
+                  </div>
+                  <div>
+                    {data[0].field_customer_id.field_email}
+                  </div>
+                  <div>
+                    Tax Id: {data[0].field_customer_id.field_tax_id}
+                  </div>
+              </div>
+            </div>
+
+
+            
+
+            <div className='my-2'>
+              <div className='flex gap-2 border-b border-slate-300'>
+                <div className='w-96'>Product</div>
+                <div className='w-12'>Qty</div>
+                <div className='w-32 text-right'>Rate</div>
+                <div className='w-32 text-right'>Amount</div>
+              </div>
+              {
+                data[0].field_sales_invoice_items?.map((item) => {
+                  return<div key={item.id} className='flex gap-2 border-b border-slate-300 py-1'>
+                    <div className='w-96'>{item?.title}</div>
+                    <div className='w-12'>{item?.field_product_quantity_units}</div>
+                    <div className='w-32'><Amount amt={item?.field_product_unit_price} /></div>
+                    <div className='w-32'><Amount amt={item?.field_product_unit_price * item?.field_product_quantity_units} /></div>
+                  </div>
+                })
+              }
+              <div className='flex gap-2 py-2 border-t border-b border-slate-300'>
+                <div className='w-96'></div>
+                <div className='w-12'></div>
+                <div className='w-32 uppercase text-xs flex justify-end items-center'>Total Amount</div>
+                <div className='w-32 text-lg text-right'><AmountTotal amt={data[0]?.field_total_amount} /></div>
+              </div>
+            </div>  
+
+              <div className='py-2 border-b border-slate-300'>
+                <div>Note:</div>
+                <div><FormattedText>{data[0] ? data[0]?.field_notes?.value : '---'}</FormattedText></div>
+              </div>
+
+          </div>
+
+
+
+
+      {/** JOURNAL ENTRY BUTTON  */}      
+        <div className='py-2 my-2 border-b border-slate-300'>             
+                  {/* Journal Entry Post Button */}
+                  <div className='py-2'>
+                    {isCheckingJournal ? (
+                      <button className='cursor-wait px-4 py-2 border bg-slate-400 text-white' disabled>
+                        Checking...
+                      </button>
+                    ) : journalEntryNodeId ? (
+                      <button
+                        className='cursor-pointer px-4 py-2 border bg-blue-500 text-white'
+                        onClick={() => window.location.href = `/acc-journal-entry?nodeId=${journalEntryNodeId}`}
+                      >
+                        Go to Journal Entry
+                      </button>
+                    ) : (
+                      <button
+                        className='cursor-pointer px-4 py-2 border bg-slate-600 text-white'
+                        onClick={() => postJournalForPurchase(data?.data)}
+                      >
+                        Post Journal Entry
+                      </button>
+                    )}
+                  </div>
+          </div>
+              
+            
+          
+
+
+
+
+
+        </div>
+      );
+    }
+  compiled: |
+    function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+        try {
+            var info = gen[key](arg);
+            var value = info.value;
+        } catch (error) {
+            reject(error);
+            return;
+        }
+        if (info.done) {
+            resolve(value);
+        } else {
+            Promise.resolve(value).then(_next, _throw);
+        }
+    }
+    function _async_to_generator(fn) {
+        return function() {
+            var self = this, args = arguments;
+            return new Promise(function(resolve, reject) {
+                var gen = fn.apply(self, args);
+                function _next(value) {
+                    asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+                }
+                function _throw(err) {
+                    asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+                }
+                _next(undefined);
+            });
+        };
+    }
+    import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+    import { useState, useEffect } from 'react';
+    import useSWR from 'swr';
+    import { JsonApiClient } from 'drupal-canvas';
+    import { DrupalJsonApiParams } from 'drupal-jsonapi-params';
+    import { FormattedText } from 'drupal-canvas';
+    import PageTitle from '@/components/utl-page-title';
+    import Button from '@/components/utl-button';
+    import AmountTotal from '@/components/utl-amount-total';
+    import Amount from '@/components/utl-amount';
+    const client = new JsonApiClient();
+    export default function sales_invoice_copy() {
+        var _data__field_customer_id_field_phone_number, _data__field_sales_invoice_items, _data_, _data__field_notes, _data_1;
+        /**--------------------------------------------------------------------------------------------
+      * Extract UUID from URL query parameters and fetch the corresponding purchase data via JSON:API.
+      * Then display the purchase details and provide a button to post a journal entry for the purchase.
+      -------------------------------------------------------------------------------------------*/ const [uuid, setUuid] = useState(null);
+        const [journalEntryNodeId, setJournalEntryNodeId] = useState(null);
+        const [isCheckingJournal, setIsCheckingJournal] = useState(false);
+        // Function to check for existing journal entry
+        const checkJournalEntry = (uuidParam)=>{
+            console.log('Checking journal entry for UUID:', uuidParam);
+            if (!uuidParam) return;
+            setIsCheckingJournal(true);
+            setJournalEntryNodeId(null);
+            // First get the purchase nid from UUID
+            fetch(`${window.location.origin}/jsonapi/node/sales_book/${uuidParam}`).then((res)=>res.json()).then((purchaseData)=>{
+                var _purchaseData_data_attributes, _purchaseData_data;
+                const purchaseNid = purchaseData === null || purchaseData === void 0 ? void 0 : (_purchaseData_data = purchaseData.data) === null || _purchaseData_data === void 0 ? void 0 : (_purchaseData_data_attributes = _purchaseData_data.attributes) === null || _purchaseData_data_attributes === void 0 ? void 0 : _purchaseData_data_attributes.drupal_internal__nid;
+                if (!purchaseNid) {
+                    setIsCheckingJournal(false);
+                    return;
+                }
+                // Then check if journal entry exists
+                return fetch(`/jsonapi/node/acc_journal_entry?filter[field_purchase_sale_reference_id]=${'sales' + ' ' + String(uuidParam)}`).then((res)=>res.json()).then((result)=>{
+                    var _result_data;
+                    if ((result === null || result === void 0 ? void 0 : (_result_data = result.data) === null || _result_data === void 0 ? void 0 : _result_data.length) > 0) {
+                        setJournalEntryNodeId(result.data[0].attributes.drupal_internal__nid);
+                    }
+                    setIsCheckingJournal(false);
+                });
+            }).catch((err)=>{
+                console.error('Error checking journal entry:', err);
+                setIsCheckingJournal(false);
+            });
+        };
+        /**----------------------------------------------------------------
+     *  UUID FROM THE SALES LIST
+     ------------------------------------------------------------------*/ const [nodeId, setNodeId] = useState('');
+        useEffect(()=>{
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('nodeId');
+            console.log('Node Id : ', id);
+            setNodeId(id);
+        }, []);
+        /**----------------------------------------------------------------------
+     * FETCH data for invoice copy from content type 'invoice'
+     ------------------------------------------------------------------------*/ const { data, error, isLoading } = useSWR([
+            'node--invoice',
+            {
+                queryString: new DrupalJsonApiParams().addInclude([
+                    'field_sales_invoice_items',
+                    'field_customer_id'
+                ]).addFilter('drupal_internal__nid', nodeId, '=') // Exclude current article by uuid.
+                .getQueryString()
+            }
+        ], ([type, options])=>client.getCollection(type, options));
+        console.log('DATA', data, error, isLoading);
+        // Get CSRF token
+        function getCsrfToken() {
+            return _async_to_generator(function*() {
+                try {
+                    const response = yield fetch("/session/token", {
+                        method: "GET",
+                        credentials: "include"
+                    });
+                    if (!response.ok) {
+                        throw new Error(`Failed to get CSRF token: ${response.status}`);
+                    }
+                    return yield response.text();
+                } catch (error) {
+                    console.error("CSRF token error:", error);
+                    throw error;
+                }
+            })();
+        }
+        /**
+     * Create Journal Entries (Drupal fields aligned)
+     * this function is generated by chatgpt
+        */ function createJournalEntries(invoiceId) {
+            return _async_to_generator(function*() {
+                try {
+                    var _productItems_;
+                    const token = yield getCsrfToken();
+                    const today = new Date().toISOString().split('T')[0];
+                    // ✅ Calculate totals
+                    const totalAmount = productItems.reduce((sum, item)=>sum + item.price * item.quantity, 0);
+                    // (Optional) If you have cost field
+                    const totalCOGS = productItems.reduce((sum, item)=>sum + (item.cost_price || 0) * item.quantity, 0);
+                    const refString = `${invoiceId}-${today}`;
+                    // Get nodeId from the first product item
+                    const nodeId = (_productItems_ = productItems[0]) === null || _productItems_ === void 0 ? void 0 : _productItems_.nodeId;
+                    // Only create journal entries if we have a valid nodeId
+                    if (!nodeId) {
+                        console.warn('No nodeId available for journal entries');
+                        return;
+                    }
+                    console.log('total Amount', totalAmount, 'total COGS', totalCOGS, 'node id', nodeId, 'refString', refString);
+                    // -------- Revenue Entry --------
+                    const revenueEntry = {
+                        data: {
+                            type: 'node--acc_journal_entry',
+                            attributes: {
+                                title: `Invoice Revenue - ${invoiceId}`,
+                                field_amount: totalAmount,
+                                field_date: today,
+                                field_purchase_sale_reference_id: nodeId,
+                                field_purchase_sale_reference_ty: 'invoice',
+                                field_description: {
+                                    value: `Revenue for Invoice ${nodeId}`,
+                                    format: 'plain_text'
+                                },
+                                field_comment: {
+                                    value: `Auto generated consolidated revenue entry`,
+                                    format: 'plain_text'
+                                }
+                            },
+                            relationships: {
+                                field_debit_account: {
+                                    data: {
+                                        type: "node--accounting_ledger",
+                                        id: "91ff33c2-6d0d-4876-9746-e1551585f29e" // Accounts Receivable / Cash
+                                    }
+                                },
+                                field_credit_account: {
+                                    data: {
+                                        type: "node--accounting_ledger",
+                                        id: "4f7d0b0f-0a5a-421d-ab45-47779da5ecc0" // Sales Revenue
+                                    }
+                                }
+                            }
+                        }
+                    };
+                    // -------- COGS Entry --------
+                    const cogsEntry = {
+                        data: {
+                            type: 'node--acc_journal_entry',
+                            attributes: {
+                                title: `COGS - ${invoiceId}`,
+                                field_amount: totalCOGS,
+                                field_date: today,
+                                field_purchase_sale_reference_id: nodeId,
+                                field_purchase_sale_reference_ty: 'invoice',
+                                field_description: {
+                                    value: `COGS for Invoice ${nodeId}`,
+                                    format: 'plain_text'
+                                },
+                                field_comment: {
+                                    value: `Auto generated consolidated COGS entry`,
+                                    format: 'plain_text'
+                                }
+                            },
+                            relationships: {
+                                field_debit_account: {
+                                    data: {
+                                        type: "node--accounting_ledger",
+                                        id: "d030ea84-af4f-4f2e-a1a7-313b560181fc" // COGS Expense
+                                    }
+                                },
+                                field_credit_account: {
+                                    data: {
+                                        type: "node--accounting_ledger",
+                                        id: "c5343609-65ee-4e0d-926e-20104956edd9" // Inventory
+                                    }
+                                }
+                            }
+                        }
+                    };
+                    // -------- POST Revenue --------
+                    const res1 = yield fetch('/jsonapi/node/acc_journal_entry', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/vnd.api+json',
+                            'Accept': 'application/vnd.api+json',
+                            'X-CSRF-Token': token
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify(revenueEntry)
+                    });
+                    const data1 = yield res1.json();
+                    console.log('Revenue entry response:', data1);
+                    // -------- POST COGS --------
+                    if (totalCOGS > 0) {
+                        const res2 = yield fetch('/jsonapi/node/acc_journal_entry', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/vnd.api+json',
+                                'Accept': 'application/vnd.api+json',
+                                'X-CSRF-Token': token
+                            },
+                            credentials: 'include',
+                            body: JSON.stringify(cogsEntry)
+                        });
+                        const data2 = yield res2.json();
+                        console.log('COGS entry response:', data2);
+                    }
+                // ✅ Redirect commented out - can be enabled if needed
+                /** 
+        if (data2?.data?.attributes?.drupal_internal__nid) {
+          window.location.href = `/acc-journal-entry?nodeId=${data1.data.attributes.drupal_internal__nid},${data2.data.attributes.drupal_internal__nid}`;
+        }
+        */ } catch (err) {
+                    console.error('Journal error:', err);
+                    throw err;
+                }
+            })();
+        }
+        if (error) return /*#__PURE__*/ _jsx("div", {
+            children: "Loading error..."
+        });
+        if (isLoading) return /*#__PURE__*/ _jsx("div", {
+            children: "Loading ..."
+        });
+        return /*#__PURE__*/ _jsxs("div", {
+            children: [
+                /*#__PURE__*/ _jsx("div", {
+                    className: "flex justify-end",
+                    children: /*#__PURE__*/ _jsx(Button, {
+                        children: /*#__PURE__*/ _jsx("button", {
+                            className: "cursor-pointer",
+                            onClick: ()=>window.history.back(),
+                            children: "← Back"
+                        })
+                    })
+                }),
+                /*#__PURE__*/ _jsx(PageTitle, {
+                    title: "Invoice - Post Journal Entry"
+                }),
+                /*#__PURE__*/ _jsxs("div", {
+                    children: [
+                        /*#__PURE__*/ _jsxs("div", {
+                            className: "flex justify-between py-4 border-b border-slate-300",
+                            children: [
+                                /*#__PURE__*/ _jsxs("div", {
+                                    children: [
+                                        /*#__PURE__*/ _jsxs("div", {
+                                            className: "font-bold",
+                                            children: [
+                                                "Invoice - ",
+                                                data[0].field_invoice_number
+                                            ]
+                                        }),
+                                        /*#__PURE__*/ _jsx("div", {
+                                            className: "text-xs",
+                                            children: data[0].field_invoice_date
+                                        })
+                                    ]
+                                }),
+                                /*#__PURE__*/ _jsx("div", {
+                                    children: /*#__PURE__*/ _jsx("div", {
+                                        className: "text-xs",
+                                        children: data[0].field_customer_id.field_customer_code
+                                    })
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsxs("div", {
+                            className: "grid md:grid-cols-2 py-4 border-b border-slate-300",
+                            children: [
+                                /*#__PURE__*/ _jsxs("div", {
+                                    children: [
+                                        /*#__PURE__*/ _jsx("div", {
+                                            className: "font-semibold",
+                                            children: data[0].field_customer_id.title
+                                        }),
+                                        /*#__PURE__*/ _jsx("div", {
+                                            className: "text-xs",
+                                            children: /*#__PURE__*/ _jsx(FormattedText, {
+                                                children: data[0].field_customer_id.field_address.value
+                                            })
+                                        })
+                                    ]
+                                }),
+                                /*#__PURE__*/ _jsxs("div", {
+                                    className: "text-xs border-l border-slate-300 pl-4",
+                                    children: [
+                                        /*#__PURE__*/ _jsx("div", {
+                                            className: "flex gap-2",
+                                            children: (_data__field_customer_id_field_phone_number = data[0].field_customer_id.field_phone_number) === null || _data__field_customer_id_field_phone_number === void 0 ? void 0 : _data__field_customer_id_field_phone_number.map((item)=>/*#__PURE__*/ _jsx("div", {
+                                                    children: item
+                                                }))
+                                        }),
+                                        /*#__PURE__*/ _jsx("div", {
+                                            children: data[0].field_customer_id.field_email
+                                        }),
+                                        /*#__PURE__*/ _jsxs("div", {
+                                            children: [
+                                                "Tax Id: ",
+                                                data[0].field_customer_id.field_tax_id
+                                            ]
+                                        })
+                                    ]
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsxs("div", {
+                            className: "my-2",
+                            children: [
+                                /*#__PURE__*/ _jsxs("div", {
+                                    className: "flex gap-2 border-b border-slate-300",
+                                    children: [
+                                        /*#__PURE__*/ _jsx("div", {
+                                            className: "w-96",
+                                            children: "Product"
+                                        }),
+                                        /*#__PURE__*/ _jsx("div", {
+                                            className: "w-12",
+                                            children: "Qty"
+                                        }),
+                                        /*#__PURE__*/ _jsx("div", {
+                                            className: "w-32 text-right",
+                                            children: "Rate"
+                                        }),
+                                        /*#__PURE__*/ _jsx("div", {
+                                            className: "w-32 text-right",
+                                            children: "Amount"
+                                        })
+                                    ]
+                                }),
+                                (_data__field_sales_invoice_items = data[0].field_sales_invoice_items) === null || _data__field_sales_invoice_items === void 0 ? void 0 : _data__field_sales_invoice_items.map((item)=>{
+                                    return /*#__PURE__*/ _jsxs("div", {
+                                        className: "flex gap-2 border-b border-slate-300 py-1",
+                                        children: [
+                                            /*#__PURE__*/ _jsx("div", {
+                                                className: "w-96",
+                                                children: item === null || item === void 0 ? void 0 : item.title
+                                            }),
+                                            /*#__PURE__*/ _jsx("div", {
+                                                className: "w-12",
+                                                children: item === null || item === void 0 ? void 0 : item.field_product_quantity_units
+                                            }),
+                                            /*#__PURE__*/ _jsx("div", {
+                                                className: "w-32",
+                                                children: /*#__PURE__*/ _jsx(Amount, {
+                                                    amt: item === null || item === void 0 ? void 0 : item.field_product_unit_price
+                                                })
+                                            }),
+                                            /*#__PURE__*/ _jsx("div", {
+                                                className: "w-32",
+                                                children: /*#__PURE__*/ _jsx(Amount, {
+                                                    amt: (item === null || item === void 0 ? void 0 : item.field_product_unit_price) * (item === null || item === void 0 ? void 0 : item.field_product_quantity_units)
+                                                })
+                                            })
+                                        ]
+                                    }, item.id);
+                                }),
+                                /*#__PURE__*/ _jsxs("div", {
+                                    className: "flex gap-2 py-2 border-t border-b border-slate-300",
+                                    children: [
+                                        /*#__PURE__*/ _jsx("div", {
+                                            className: "w-96"
+                                        }),
+                                        /*#__PURE__*/ _jsx("div", {
+                                            className: "w-12"
+                                        }),
+                                        /*#__PURE__*/ _jsx("div", {
+                                            className: "w-32 uppercase text-xs flex justify-end items-center",
+                                            children: "Total Amount"
+                                        }),
+                                        /*#__PURE__*/ _jsx("div", {
+                                            className: "w-32 text-lg text-right",
+                                            children: /*#__PURE__*/ _jsx(AmountTotal, {
+                                                amt: (_data_ = data[0]) === null || _data_ === void 0 ? void 0 : _data_.field_total_amount
+                                            })
+                                        })
+                                    ]
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsxs("div", {
+                            className: "py-2 border-b border-slate-300",
+                            children: [
+                                /*#__PURE__*/ _jsx("div", {
+                                    children: "Note:"
+                                }),
+                                /*#__PURE__*/ _jsx("div", {
+                                    children: /*#__PURE__*/ _jsx(FormattedText, {
+                                        children: data[0] ? (_data_1 = data[0]) === null || _data_1 === void 0 ? void 0 : (_data__field_notes = _data_1.field_notes) === null || _data__field_notes === void 0 ? void 0 : _data__field_notes.value : '---'
+                                    })
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                /*#__PURE__*/ _jsx("div", {
+                    className: "py-2 my-2 border-b border-slate-300",
+                    children: /*#__PURE__*/ _jsx("div", {
+                        className: "py-2",
+                        children: isCheckingJournal ? /*#__PURE__*/ _jsx("button", {
+                            className: "cursor-wait px-4 py-2 border bg-slate-400 text-white",
+                            disabled: true,
+                            children: "Checking..."
+                        }) : journalEntryNodeId ? /*#__PURE__*/ _jsx("button", {
+                            className: "cursor-pointer px-4 py-2 border bg-blue-500 text-white",
+                            onClick: ()=>window.location.href = `/acc-journal-entry?nodeId=${journalEntryNodeId}`,
+                            children: "Go to Journal Entry"
+                        }) : /*#__PURE__*/ _jsx("button", {
+                            className: "cursor-pointer px-4 py-2 border bg-slate-600 text-white",
+                            onClick: ()=>postJournalForPurchase(data === null || data === void 0 ? void 0 : data.data),
+                            children: "Post Journal Entry"
+                        })
+                    })
+                })
+            ]
+        });
+    }
+css:
+  original: ''
+  compiled: ''
+dataDependencies:
+  drupalSettings:
+    - v0.baseUrl
+    - v0.jsonapiSettings

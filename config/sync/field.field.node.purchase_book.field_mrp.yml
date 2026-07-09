@@ -1,0 +1,23 @@
+uuid: 7b1f82f7-b23a-4444-b518-20a778b06b1e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_mrp
+    - node.type.purchase_book
+id: node.purchase_book.field_mrp
+field_name: field_mrp
+entity_type: node
+bundle: purchase_book
+label: MRP
+description: 'Maximum Retail Price'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

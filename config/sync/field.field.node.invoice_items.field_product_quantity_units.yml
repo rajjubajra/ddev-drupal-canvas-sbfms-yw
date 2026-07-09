@@ -1,0 +1,23 @@
+uuid: fc103ace-e133-4734-896f-5f998636d87c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_product_quantity_units
+    - node.type.invoice_items
+id: node.invoice_items.field_product_quantity_units
+field_name: field_product_quantity_units
+entity_type: node
+bundle: invoice_items
+label: 'Product quantity units'
+description: 'Product quantity in units.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

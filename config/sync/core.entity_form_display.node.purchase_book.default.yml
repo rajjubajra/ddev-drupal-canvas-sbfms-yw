@@ -1,0 +1,261 @@
+uuid: c2b70054-5f12-45d8-9a16-08c7b725899c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.purchase_book.field_cost_price
+    - field.field.node.purchase_book.field_image_image
+    - field.field.node.purchase_book.field_invoice_date
+    - field.field.node.purchase_book.field_mrp
+    - field.field.node.purchase_book.field_product_brand
+    - field.field.node.purchase_book.field_product_code
+    - field.field.node.purchase_book.field_product_company
+    - field.field.node.purchase_book.field_product_name
+    - field.field.node.purchase_book.field_product_size
+    - field.field.node.purchase_book.field_purchase_reference
+    - field.field.node.purchase_book.field_quantity
+    - field.field.node.purchase_book.field_received_date
+    - field.field.node.purchase_book.field_sales_department
+    - field.field.node.purchase_book.field_selling_price
+    - field.field.node.purchase_book.field_sku
+    - field.field.node.purchase_book.field_unit_per_box
+    - field.field.node.purchase_book.field_vendor
+    - field.field.node.purchase_book.field_vendor_uuid
+    - node.type.purchase_book
+  module:
+    - datetime
+    - media_library
+    - path
+    - tagify
+id: node.purchase_book.default
+targetEntityType: node
+bundle: purchase_book
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 19
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_cost_price:
+    type: number
+    weight: 10
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_image_image:
+    type: media_library_widget
+    weight: 17
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+  field_invoice_date:
+    type: datetime_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_mrp:
+    type: number
+    weight: 26
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_product_brand:
+    type: tagify_entity_reference_autocomplete_widget
+    weight: 6
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      placeholder: ''
+      suggestions_dropdown: 1
+      show_entity_id: 0
+      show_info_label: 0
+      info_label: ''
+      parent_selection: 1
+    third_party_settings: {  }
+  field_product_code:
+    type: tagify_entity_reference_autocomplete_widget
+    weight: 4
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      placeholder: ''
+      suggestions_dropdown: 1
+      show_entity_id: 0
+      show_info_label: 0
+      info_label: ''
+      parent_selection: 1
+    third_party_settings: {  }
+  field_product_company:
+    type: tagify_entity_reference_autocomplete_widget
+    weight: 5
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      placeholder: ''
+      suggestions_dropdown: 1
+      show_entity_id: 0
+      show_info_label: 0
+      info_label: ''
+      parent_selection: 1
+    third_party_settings: {  }
+  field_product_name:
+    type: tagify_entity_reference_autocomplete_widget
+    weight: 7
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      placeholder: ''
+      suggestions_dropdown: 1
+      show_entity_id: 0
+      show_info_label: 0
+      info_label: ''
+      parent_selection: 1
+    third_party_settings: {  }
+  field_product_size:
+    type: tagify_entity_reference_autocomplete_widget
+    weight: 9
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      placeholder: ''
+      suggestions_dropdown: 1
+      show_entity_id: 0
+      show_info_label: 0
+      info_label: ''
+      parent_selection: 1
+    third_party_settings: {  }
+  field_purchase_reference:
+    type: string_textfield
+    weight: 3
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_quantity:
+    type: number
+    weight: 13
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_received_date:
+    type: datetime_default
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_sales_department:
+    type: tagify_entity_reference_autocomplete_widget
+    weight: 14
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      placeholder: ''
+      suggestions_dropdown: 1
+      show_entity_id: 0
+      show_info_label: 0
+      info_label: ''
+      parent_selection: 1
+    third_party_settings: {  }
+  field_selling_price:
+    type: number
+    weight: 11
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_sku:
+    type: tagify_entity_reference_autocomplete_widget
+    weight: 8
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      placeholder: ''
+      suggestions_dropdown: 1
+      show_entity_id: 0
+      show_info_label: 0
+      info_label: ''
+      parent_selection: 1
+    third_party_settings: {  }
+  field_unit_per_box:
+    type: number
+    weight: 12
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_vendor:
+    type: entity_reference_autocomplete
+    weight: 15
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vendor_uuid:
+    type: string_textfield
+    weight: 16
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 20
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 22
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 18
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  url_redirects:
+    weight: 21
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  promote: true
+  publish_on: true
+  publish_state: true
+  sticky: true
+  unpublish_on: true
+  unpublish_state: true

@@ -1,0 +1,18 @@
+uuid: 929d7eed-1377-4f3f-8e47-1ecbd6ac7021
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.js_component.list-ledger-by-date-range
+active_version: 8fe3be948e0194e1
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions: {  }
+    fallback_metadata:
+      slot_definitions: {  }
+label: acc-list-ledger-by-date-range
+id: js.list-ledger-by-date-range
+provider: null
+source: js
+source_local_id: list-ledger-by-date-range

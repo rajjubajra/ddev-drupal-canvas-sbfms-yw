@@ -1,0 +1,14 @@
+uuid: b8a23200-6bfc-48ff-be8d-c65273adb3cd
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.jr_accountant
+  module:
+    - user
+id: user_add_role_action.jr_accountant
+label: 'Add the Jr Accountant role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: jr_accountant

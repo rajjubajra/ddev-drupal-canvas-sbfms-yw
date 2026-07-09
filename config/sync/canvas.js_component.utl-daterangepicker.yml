@@ -1,0 +1,178 @@
+uuid: b26ef999-b588-4738-b9f0-bdf9efdb5263
+langcode: en
+status: false
+dependencies: {  }
+machineName: utl-daterangepicker
+name: utl-daterangepicker
+required: {  }
+props: {  }
+slots: {  }
+js:
+  original: |+
+    import { useState, useEffect } from 'react';
+    import useSWR from 'swr';
+    import { JsonApiClient } from 'drupal-canvas';
+    import { DrupalJsonApiParams } from 'drupal-jsonapi-params';
+
+
+
+    export default function DateRange({ dateFrom, dateTo, setDateFrom, setDateTo}) {
+      
+
+      console.log('dateFrom', dateFrom, dateTo)
+        const [financialYearStart, setFinancialYearStart] = useState('');
+        const [financialYearEnd, setFinancialYearEnd] = useState('');
+        const [from, setFrom] = useState('');
+        const [to, setTo] = useState('')
+      
+      /* --------------------------------------------------
+           Drupal JSON:API Client
+        -------------------------------------------------- */
+        const client = new JsonApiClient();
+
+      /* --------------------------------------------------
+         Fetch: Financial Year
+      -------------------------------------------------- */
+      const { data, error, isLoading } = useSWR(
+        [
+          'node--financial_year',
+          {
+            queryString: new DrupalJsonApiParams()
+              .addSort(['-created'])
+              .getQueryString(),
+          },
+        ],
+        ([type, options]) => client.getCollection(type, options)
+      );
+
+      
+
+       useEffect(() => {
+
+
+         if(dateFrom === undefined && dateTo === undefined){
+           setFrom(data[0].field_date_from);
+           setTo(data[0].field_date_to);
+         }else{
+           setFrom(dateFrom);
+           setTo(dateTo);
+         }
+          
+         
+         
+       },[data])
+      
+
+      
+      return (
+          <form
+            className="flex flex-wrap gap-4 items-end mb-6 p-4 border rounded"
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Date From
+              </label>
+              <input
+                type="date"
+                value={from}
+                onChange={(e) => setDateFrom(e.target.value)}
+                className="border px-2 py-1 rounded"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Date To 
+              </label>
+              <input
+                type="date"
+                value={to}
+                onChange={(e) => setDateTo(e.target.value)}
+                className="border px-2 py-1 rounded"
+              />
+            </div>
+          </form>
+      );
+    }
+
+
+
+  compiled: |
+    import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+    import { useState, useEffect } from 'react';
+    import useSWR from 'swr';
+    import { JsonApiClient } from 'drupal-canvas';
+    import { DrupalJsonApiParams } from 'drupal-jsonapi-params';
+    export default function DateRange({ dateFrom, dateTo, setDateFrom, setDateTo }) {
+        console.log('dateFrom', dateFrom, dateTo);
+        const [financialYearStart, setFinancialYearStart] = useState('');
+        const [financialYearEnd, setFinancialYearEnd] = useState('');
+        const [from, setFrom] = useState('');
+        const [to, setTo] = useState('');
+        /* --------------------------------------------------
+           Drupal JSON:API Client
+        -------------------------------------------------- */ const client = new JsonApiClient();
+        /* --------------------------------------------------
+         Fetch: Financial Year
+      -------------------------------------------------- */ const { data, error, isLoading } = useSWR([
+            'node--financial_year',
+            {
+                queryString: new DrupalJsonApiParams().addSort([
+                    '-created'
+                ]).getQueryString()
+            }
+        ], ([type, options])=>client.getCollection(type, options));
+        useEffect(()=>{
+            if (dateFrom === undefined && dateTo === undefined) {
+                setFrom(data[0].field_date_from);
+                setTo(data[0].field_date_to);
+            } else {
+                setFrom(dateFrom);
+                setTo(dateTo);
+            }
+        }, [
+            data
+        ]);
+        return /*#__PURE__*/ _jsxs("form", {
+            className: "flex flex-wrap gap-4 items-end mb-6 p-4 border rounded",
+            onSubmit: (e)=>e.preventDefault(),
+            children: [
+                /*#__PURE__*/ _jsxs("div", {
+                    children: [
+                        /*#__PURE__*/ _jsx("label", {
+                            className: "block text-sm font-semibold mb-1",
+                            children: "Date From"
+                        }),
+                        /*#__PURE__*/ _jsx("input", {
+                            type: "date",
+                            value: from,
+                            onChange: (e)=>setDateFrom(e.target.value),
+                            className: "border px-2 py-1 rounded"
+                        })
+                    ]
+                }),
+                /*#__PURE__*/ _jsxs("div", {
+                    children: [
+                        /*#__PURE__*/ _jsx("label", {
+                            className: "block text-sm font-semibold mb-1",
+                            children: "Date To"
+                        }),
+                        /*#__PURE__*/ _jsx("input", {
+                            type: "date",
+                            value: to,
+                            onChange: (e)=>setDateTo(e.target.value),
+                            className: "border px-2 py-1 rounded"
+                        })
+                    ]
+                })
+            ]
+        });
+    }
+css:
+  original: ''
+  compiled: ''
+dataDependencies:
+  drupalSettings:
+    - v0.baseUrl
+    - v0.jsonapiSettings

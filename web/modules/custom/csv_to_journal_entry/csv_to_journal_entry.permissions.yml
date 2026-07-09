@@ -1,0 +1,3 @@
+import csv to journal entry:
+  title: 'Import CSV to journal entries'
+  description: 'Allows users to upload a CSV and create acc_journal_entry content.'

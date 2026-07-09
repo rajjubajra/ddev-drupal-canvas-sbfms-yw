@@ -1,0 +1,29 @@
+uuid: a1ddca24-525c-41bb-a9a8-87e0a0790fc5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_sku
+    - node.type.purchase_book
+    - taxonomy.vocabulary.sku
+id: node.purchase_book.field_sku
+field_name: field_sku
+entity_type: node
+bundle: purchase_book
+label: SKU
+description: "SKU = Stock Keeping Unit\r\n- A unique code for this specific product or variant.\r\n- If the product differs by size, brand, or price, create a new.\r\n- Keep it short, readable, and consistent e.g. 100gm, 200gm, 500ml etc"
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      sku: sku
+    sort:
+      field: name
+      direction: asc
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,0 +1,3 @@
+import journal csv:
+  title: 'Import journal entries via CSV/XLSX'
+  description: 'Allows users to upload and import journal entries from CSV or Excel files.'

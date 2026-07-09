@@ -1,0 +1,3 @@
+services:
+  journal_import.csv_validator:
+    class: Drupal\journal_import\Service\CsvValidator

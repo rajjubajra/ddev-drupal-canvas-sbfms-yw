@@ -1,0 +1,7 @@
+name: acc-day-book
+machineName: acc-day-book
+status: true
+required: []
+props:
+  properties: []
+slots: []

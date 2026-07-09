@@ -1,0 +1,20 @@
+name: Olivero Sub
+type: theme
+description: Sub-theme of Olivero
+core_version_requirement: ^10 || ^11
+base theme: olivero
+
+libraries:
+  - olivero_sub/global-styling
+
+regions:
+  header: Header
+  primary_menu: Primary menu
+  secondary_menu: Secondary menu
+  hero: Hero
+  highlighted: Highlighted
+  breadcrumb: Breadcrumb
+  content: Content
+  sidebar: Sidebar
+  footer_top: Footer Top
+  footer_bottom: Footer Bottom

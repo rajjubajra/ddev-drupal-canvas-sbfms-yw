@@ -1,0 +1,29 @@
+uuid: f0ef5776-4daf-4da7-98f9-ffb96bfb44e2
+langcode: en
+status: true
+dependencies:
+  module:
+    - scheduler
+    - taxonomy_unique
+third_party_settings:
+  scheduler:
+    expand_fieldset: when_required
+    fields_display_mode: vertical_tab
+    publish_enable: false
+    publish_past_date: error
+    publish_past_date_created: false
+    publish_required: false
+    publish_revision: false
+    publish_touch: false
+    show_message_after_update: true
+    unpublish_enable: false
+    unpublish_required: false
+    unpublish_revision: false
+  taxonomy_unique:
+    enabled: false
+    message: 'Term "%term" already exists in vocabulary "%vocabulary".'
+name: 'Sales - Department'
+vid: sales_department
+description: 'Electronics,  Food,  Stationery,  Furniture etc'
+weight: 0
+new_revision: false

@@ -1,0 +1,19 @@
+uuid: 764c1be5-0b08-48bc-85fd-3f01fe9dc40e
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_sales_invoice_items
+field_name: field_sales_invoice_items
+entity_type: node
+type: entity_reference
+settings:
+  target_type: node
+module: core
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

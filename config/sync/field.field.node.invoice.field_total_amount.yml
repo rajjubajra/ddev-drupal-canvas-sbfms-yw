@@ -1,0 +1,23 @@
+uuid: d64334e3-cd26-4c17-9a43-8bc039db3d7a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_total_amount
+    - node.type.invoice
+id: node.invoice.field_total_amount
+field_name: field_total_amount
+entity_type: node
+bundle: invoice
+label: 'Total Amount'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

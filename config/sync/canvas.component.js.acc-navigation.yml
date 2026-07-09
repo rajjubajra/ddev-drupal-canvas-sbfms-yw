@@ -1,0 +1,18 @@
+uuid: b2d2b860-2b54-4d61-926e-dbfd7e0beaee
+langcode: en
+status: true
+dependencies:
+  config:
+    - canvas.js_component.acc-navigation
+active_version: 8fe3be948e0194e1
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions: {  }
+    fallback_metadata:
+      slot_definitions: {  }
+label: acc-navigation
+id: js.acc-navigation
+provider: null
+source: js
+source_local_id: acc-navigation

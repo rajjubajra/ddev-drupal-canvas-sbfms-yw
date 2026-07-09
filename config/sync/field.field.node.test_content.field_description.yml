@@ -1,0 +1,24 @@
+uuid: 23b8d97a-f7e6-422b-9adc-2582b007d73b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_description
+    - filter.format.content_format
+    - node.type.test_content
+  module:
+    - text
+id: node.test_content.field_description
+field_name: field_description
+entity_type: node
+bundle: test_content
+label: Description
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats:
+    - content_format
+field_type: text_long

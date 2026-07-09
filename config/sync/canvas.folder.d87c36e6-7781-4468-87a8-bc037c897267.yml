@@ -1,0 +1,9 @@
+uuid: d87c36e6-7781-4468-87a8-bc037c897267
+langcode: en
+status: true
+dependencies: {  }
+name: utils
+configEntityTypeId: js_component
+weight: 0
+items:
+  - transaction_period

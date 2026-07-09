@@ -1,0 +1,7 @@
+name: acc-ledger
+machineName: acc-ledger
+status: true
+required: []
+props:
+  properties: []
+slots: []

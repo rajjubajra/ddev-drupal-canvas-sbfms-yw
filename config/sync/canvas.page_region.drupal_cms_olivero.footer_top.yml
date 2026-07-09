@@ -1,0 +1,22 @@
+uuid: 983cdf13-7369-419a-9b4c-77e7ff5a7edd
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.component.block.system_menu_block.footer
+  theme:
+    - drupal_cms_olivero
+id: drupal_cms_olivero.footer_top
+region: footer_top
+theme: drupal_cms_olivero
+component_tree:
+  -
+    uuid: 0945835d-6ba2-4062-a700-fbd82df30d68
+    component_id: block.system_menu_block.footer
+    component_version: 68bdb40e1ac48125
+    inputs:
+      label: Footer
+      label_display: '0'
+      level: 1
+      depth: 1
+      expand_all_items: false

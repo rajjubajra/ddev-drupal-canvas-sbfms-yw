@@ -1,0 +1,23 @@
+uuid: 74fbd5d9-13fc-45dc-9620-f26a9e1428a1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_credit_amount
+    - paragraphs.paragraphs_type.credit_entry
+id: paragraph.credit_entry.field_credit_amount
+field_name: field_credit_amount
+entity_type: paragraph
+bundle: credit_entry
+label: 'Credit Amount'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0.01
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

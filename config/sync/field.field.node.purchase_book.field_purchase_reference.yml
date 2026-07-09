@@ -1,0 +1,19 @@
+uuid: 57aa554c-8348-4666-9e88-e222f243e047
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_purchase_reference
+    - node.type.purchase_book
+id: node.purchase_book.field_purchase_reference
+field_name: field_purchase_reference
+entity_type: node
+bundle: purchase_book
+label: 'Purchase Reference'
+description: 'Reference Number of the purchase. '
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

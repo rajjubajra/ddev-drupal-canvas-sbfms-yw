@@ -1,0 +1,18 @@
+uuid: fa63114a-a49c-483e-a123-5a017de448de
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.js_component.sales-purchase-book
+active_version: 8fe3be948e0194e1
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions: {  }
+    fallback_metadata:
+      slot_definitions: {  }
+label: sales-purchase-book
+id: js.sales-purchase-book
+provider: null
+source: js
+source_local_id: sales-purchase-book

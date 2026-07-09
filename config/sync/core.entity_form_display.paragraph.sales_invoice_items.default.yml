@@ -1,0 +1,47 @@
+uuid: be879fd5-71f5-424d-9d35-7b68300567c1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.sales_invoice_items.field_product_id
+    - field.field.paragraph.sales_invoice_items.field_quantity
+    - field.field.paragraph.sales_invoice_items.field_unit_price
+    - paragraphs.paragraphs_type.sales_invoice_items
+  module:
+    - tagify
+id: paragraph.sales_invoice_items.default
+targetEntityType: paragraph
+bundle: sales_invoice_items
+mode: default
+content:
+  field_product_id:
+    type: tagify_entity_reference_autocomplete_widget
+    weight: 3
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      placeholder: ''
+      suggestions_dropdown: 1
+      show_entity_id: 0
+      show_info_label: 0
+      info_label: ''
+      parent_selection: 1
+    third_party_settings: {  }
+  field_quantity:
+    type: number
+    weight: 1
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_unit_price:
+    type: number
+    weight: 2
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

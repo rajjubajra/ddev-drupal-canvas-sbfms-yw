@@ -1,0 +1,19 @@
+uuid: 943d308e-7ce2-4847-8c1f-052a805f80a3
+langcode: en
+status: false
+dependencies: {  }
+active_version: fallback
+versioned_properties:
+  active:
+    settings:
+      last_active_version: 8fe3be948e0194e1
+  8fe3be948e0194e1:
+    settings:
+      prop_field_definitions: {  }
+    fallback_metadata:
+      slot_definitions: {  }
+label: list-journal-entries
+id: js.list-journal-entries
+provider: null
+source: js
+source_local_id: list-journal-entries

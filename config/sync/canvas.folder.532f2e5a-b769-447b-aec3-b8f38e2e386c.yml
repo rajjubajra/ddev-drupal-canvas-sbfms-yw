@@ -1,0 +1,8 @@
+uuid: 532f2e5a-b769-447b-aec3-b8f38e2e386c
+langcode: en
+status: true
+dependencies: {  }
+name: 'Lists (Views)'
+configEntityTypeId: component
+weight: 0
+items: {  }

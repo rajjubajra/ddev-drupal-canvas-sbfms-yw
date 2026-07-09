@@ -1,0 +1,23 @@
+uuid: 494021ba-f5dc-4da5-9ac5-0352b07cd92a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_selling_price
+    - node.type.purchase_book
+id: node.purchase_book.field_selling_price
+field_name: field_selling_price
+entity_type: node
+bundle: purchase_book
+label: 'Selling Price'
+description: ' Selling price Per Box. For unit price <b>Selling price divided by Unit in a box</b>.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0.01
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

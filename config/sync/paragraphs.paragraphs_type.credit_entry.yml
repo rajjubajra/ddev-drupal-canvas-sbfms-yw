@@ -1,0 +1,10 @@
+uuid: 67fc11a4-ba13-43c7-801f-b4b5bdb229d0
+langcode: en
+status: true
+dependencies: {  }
+id: credit_entry
+label: 'Credit Entry'
+icon_uuid: null
+icon_default: null
+description: ''
+behavior_plugins: {  }

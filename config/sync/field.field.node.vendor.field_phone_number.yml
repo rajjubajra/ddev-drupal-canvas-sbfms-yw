@@ -1,0 +1,19 @@
+uuid: 3d8fe57e-049e-4995-90ef-49a535d602ea
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_phone_number
+    - node.type.vendor
+id: node.vendor.field_phone_number
+field_name: field_phone_number
+entity_type: node
+bundle: vendor
+label: 'Phone Number'
+description: 'Customer contact number'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,10 @@
+uuid: 6a957677-14bc-4119-a62e-2784ed0909b9
+langcode: en
+status: false
+dependencies:
+  theme:
+    - drupal_cms_olivero
+id: drupal_cms_olivero.content_below
+region: content_below
+theme: drupal_cms_olivero
+component_tree: {  }

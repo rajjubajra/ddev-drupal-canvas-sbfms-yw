@@ -1,0 +1,11 @@
+uuid: f0b7d92a-53a4-4a8c-8603-bfb8dc7f3241
+langcode: en
+status: true
+dependencies: {  }
+name: utilities
+configEntityTypeId: js_component
+weight: 0
+items:
+  - daterangeselector
+  - transactionperiod
+  - transactionperiodcontext

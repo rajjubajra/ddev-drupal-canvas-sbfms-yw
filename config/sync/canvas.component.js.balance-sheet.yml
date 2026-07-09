@@ -1,0 +1,19 @@
+uuid: 73c6d1e4-6197-423e-bf57-553002c0fabc
+langcode: en
+status: false
+dependencies: {  }
+active_version: fallback
+versioned_properties:
+  active:
+    settings:
+      last_active_version: 8fe3be948e0194e1
+  8fe3be948e0194e1:
+    settings:
+      prop_field_definitions: {  }
+    fallback_metadata:
+      slot_definitions: {  }
+label: acc-balance-sheet
+id: js.balance-sheet
+provider: null
+source: js
+source_local_id: balance-sheet

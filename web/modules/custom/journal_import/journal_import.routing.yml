@@ -1,0 +1,7 @@
+journal_import.form:
+  path: '/admin/journal-import'
+  defaults:
+    _form: '\Drupal\journal_import\Form\JournalImportForm'
+    _title: 'Journal Import'
+  requirements:
+    _permission: 'access content'

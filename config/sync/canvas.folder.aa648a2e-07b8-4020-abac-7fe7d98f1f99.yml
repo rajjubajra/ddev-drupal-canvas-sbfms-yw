@@ -1,0 +1,61 @@
+uuid: aa648a2e-07b8-4020-abac-7fe7d98f1f99
+langcode: en
+status: true
+dependencies: {  }
+name: Other
+configEntityTypeId: component
+weight: 0
+items:
+  - js.acc-balance-sheet
+  - js.acc-day-book
+  - js.acc-day-book-by-date-range
+  - js.acc-income-statement
+  - js.acc-journal-entries
+  - js.acc-journal-entry
+  - js.acc-ledger
+  - js.acc-ledgers
+  - js.acc-list-journal-by-date-range
+  - js.acc-navigation
+  - js.acc-trail-balance
+  - js.balance-sheet
+  - js.copy-acc-income-statement
+  - js.copy-acc-list-journal-by-date-range
+  - js.copy-acc-list-ledger-by-date-range
+  - js.copy-acc-single-journal-entry
+  - js.copy-acc-single-ledger-account
+  - js.copy-acc-trial-balance-by-date-range
+  - js.copy-day-book-by-date-range
+  - js.day-book
+  - js.day-book-by-date-range
+  - js.income-statement
+  - js.list-journal-by-date-range
+  - js.list-journal-entries
+  - js.list-ledger-by-date-range
+  - js.list-ledgers
+  - js.revenue
+  - js.sales-invoice-copy
+  - js.sales-invoice-form
+  - js.sales-invoice-post-journal
+  - js.sales-purchase-book
+  - js.sales-purchase-journal-entry
+  - js.sales-sales-book
+  - js.single-journal-entry
+  - js.single-ledger-account
+  - js.test
+  - js.trail-balance
+  - js.trail-balance-by-date-range
+  - js.utl-amount
+  - js.utl-button
+  - js.utl-daterangepicker
+  - js.utl-page-title
+  - sdc.drupal_cms_olivero.card
+  - sdc.drupal_cms_olivero.card-grid
+  - sdc.drupal_cms_olivero.feature
+  - sdc.drupal_cms_olivero.heading
+  - sdc.drupal_cms_olivero.hero
+  - sdc.drupal_cms_olivero.paragraph
+  - sdc.drupal_cms_olivero.search-narrow
+  - sdc.drupal_cms_olivero.search-wide
+  - sdc.drupal_cms_olivero.testimonial
+  - sdc.navigation.title
+  - sdc.olivero.teaser

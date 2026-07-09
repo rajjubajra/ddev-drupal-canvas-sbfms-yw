@@ -1,0 +1,19 @@
+uuid: 9a970d2a-4704-4305-91dd-6ba80ad6836b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_customer_code
+    - node.type.customer
+id: node.customer.field_customer_code
+field_name: field_customer_code
+entity_type: node
+bundle: customer
+label: 'Customer Code'
+description: 'Human-friendly reference (like <b> CUST-001</b>)'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

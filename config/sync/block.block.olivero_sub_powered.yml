@@ -1,0 +1,22 @@
+uuid: 3066a5e3-6f1d-4090-a8e1-19907c827cce
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - olivero_sub
+_core:
+  default_config_hash: 5VBXsyvJSTQNtrh86WK8GN_FCaRtK03D1fjfZQnUvtU
+id: olivero_sub_powered
+theme: olivero_sub
+region: footer_bottom
+weight: 0
+provider: null
+plugin: system_powered_by_block
+settings:
+  id: system_powered_by_block
+  label: 'design and developed by: yellow-website.com'
+  label_display: visible
+  provider: system
+visibility: {  }

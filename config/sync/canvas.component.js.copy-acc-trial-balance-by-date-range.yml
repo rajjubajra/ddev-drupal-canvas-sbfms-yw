@@ -1,0 +1,18 @@
+uuid: 9129cd82-f00d-4d74-ad2d-638b49bb2bd2
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.js_component.copy-acc-trial-balance-by-date-range
+active_version: 8fe3be948e0194e1
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions: {  }
+    fallback_metadata:
+      slot_definitions: {  }
+label: copy-acc-trial-balance-by-date-range
+id: js.copy-acc-trial-balance-by-date-range
+provider: null
+source: js
+source_local_id: copy-acc-trial-balance-by-date-range

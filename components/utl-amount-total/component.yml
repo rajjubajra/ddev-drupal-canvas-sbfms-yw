@@ -1,0 +1,7 @@
+name: utl-amount-total
+machineName: utl-amount-total
+status: false
+required: []
+props:
+  properties: []
+slots: []

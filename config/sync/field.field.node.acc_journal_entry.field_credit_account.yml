@@ -1,0 +1,29 @@
+uuid: 8e0185b1-35ce-40e3-b627-7572c358cbff
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_credit_account
+    - node.type.acc_journal_entry
+    - node.type.accounting_ledger
+id: node.acc_journal_entry.field_credit_account
+field_name: field_credit_account
+entity_type: node
+bundle: acc_journal_entry
+label: 'Credit Account'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      accounting_ledger: accounting_ledger
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,0 +1,47 @@
+<?php
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Hide Edit/Delete from taxonomy term operations list.
+ */
+function account_types_hide_update_delete_icon_entity_operation_alter(array &$operations, EntityInterface $entity) {
+
+  if ($entity->getEntityTypeId() === 'taxonomy_term') {
+
+    $locked_vocabularies = ['account_types'];
+
+    if (in_array($entity->bundle(), $locked_vocabularies)) {
+      unset($operations['edit']);
+      unset($operations['delete']);
+    }
+  }
+}
+
+/**
+ * Hide Save and Delete buttons on term edit form.
+ */
+function account_types_hide_update_delete_icon_form_taxonomy_term_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  $term = $form_state->getFormObject()->getEntity();
+
+  $locked_vocabularies = ['account_types'];
+
+  if (in_array($term->bundle(), $locked_vocabularies)) {
+    unset($form['actions']['submit']);
+    unset($form['actions']['delete']);
+  }
+}
+
+/**
+ * Hide buttons on delete confirmation page.
+ */
+function taxonomy_lock_form_taxonomy_term_delete_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  $term = $form_state->getFormObject()->getEntity();
+
+  if ($term->bundle() === 'account_types') {
+    $form['actions'] = [];
+  }
+}

@@ -1,0 +1,68 @@
+uuid: e4971c0c-c5c9-4afa-ab71-ed751c06cd61
+langcode: en
+status: true
+dependencies: {  }
+machineName: acc-navigation
+name: acc-navigation
+required: {  }
+props: {  }
+slots: {  }
+js:
+  original: |-
+    import { JsonApiClient, sortMenu } from 'drupal-canvas';
+    import useSWR from 'swr';
+
+    const client = new JsonApiClient();
+
+    const Navigation = () => {
+      const { data, isLoading, error } = useSWR(
+        ['menu_items', 'main'],
+        ([type, resourceId]) => client.getResource(type, resourceId),
+      );
+      if (error) return 'An error has occurred.';
+      if (isLoading) return 'Loading...';
+
+      const menu = sortMenu(data);
+
+      return (
+        <ul>
+          {menu.map((item) => (
+            <li key={item.id}>
+              <a href={item.url}>{item.title}</a>
+            </li>
+          ))}
+        </ul>
+      );
+    };
+
+    export default Navigation;
+  compiled: |
+    import { jsx as _jsx } from "react/jsx-runtime";
+    import { JsonApiClient, sortMenu } from 'drupal-canvas';
+    import useSWR from 'swr';
+    const client = new JsonApiClient();
+    const Navigation = ()=>{
+        const { data, isLoading, error } = useSWR([
+            'menu_items',
+            'main'
+        ], ([type, resourceId])=>client.getResource(type, resourceId));
+        if (error) return 'An error has occurred.';
+        if (isLoading) return 'Loading...';
+        const menu = sortMenu(data);
+        return /*#__PURE__*/ _jsx("ul", {
+            children: menu.map((item)=>/*#__PURE__*/ _jsx("li", {
+                    children: /*#__PURE__*/ _jsx("a", {
+                        href: item.url,
+                        children: item.title
+                    })
+                }, item.id))
+        });
+    };
+    export default Navigation;
+css:
+  original: ''
+  compiled: ''
+dataDependencies:
+  drupalSettings:
+    - v0.baseUrl
+    - v0.jsonapiSettings

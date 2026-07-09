@@ -1,0 +1,49 @@
+uuid: 3b402677-aeb6-48d0-97f1-b36f60a328f8
+langcode: en
+status: true
+dependencies:
+  config:
+    - dashboard.dashboard.welcome
+    - filter.format.webform_default
+    - media.type.document
+    - media.type.image
+    - media.type.svg_image
+  module:
+    - captcha
+    - coffee
+    - dashboard
+    - file
+    - filter
+    - honeypot
+    - klaro
+    - media
+_core:
+  default_config_hash: dJ0L2DNSj5q6XVZAGsuVDpJTh5UeYkIPwKrUOOpr8YI
+id: authenticated
+label: 'Autheticated User'
+weight: -9
+is_admin: false
+permissions:
+  - 'access coffee'
+  - 'bypass honeypot protection'
+  - 'create document media'
+  - 'create image media'
+  - 'create media'
+  - 'create svg_image media'
+  - 'delete own files'
+  - 'edit any document media'
+  - 'edit any image media'
+  - 'edit any svg_image media'
+  - 'edit own document media'
+  - 'edit own image media'
+  - 'edit own svg_image media'
+  - 'skip CAPTCHA'
+  - 'update any media'
+  - 'update media'
+  - 'use klaro'
+  - 'use text format webform_default'
+  - 'view any document media revisions'
+  - 'view any image media revisions'
+  - 'view media'
+  - 'view own unpublished media'
+  - 'view welcome dashboard'

@@ -1,0 +1,10 @@
+uuid: df21bb99-3ee6-4e5f-bdf4-ed1920be2801
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: viRP54gfVbiAJggsHB02B_iBsSqhc8KLC7lngFFBP5Q
+id: security
+label: Security
+description: ''
+weight: 4

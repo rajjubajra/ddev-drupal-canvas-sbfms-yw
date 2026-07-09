@@ -1,0 +1,33 @@
+uuid: af1af6f0-c8ee-4f68-a606-c986307e6e15
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.credit_entry.field_credit_amount
+    - field.field.paragraph.credit_entry.field_ledger_account_name
+    - paragraphs.paragraphs_type.credit_entry
+id: paragraph.credit_entry.default
+targetEntityType: paragraph
+bundle: credit_entry
+mode: default
+content:
+  field_credit_amount:
+    type: number
+    weight: 0
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_ledger_account_name:
+    type: entity_reference_autocomplete_tags
+    weight: 1
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

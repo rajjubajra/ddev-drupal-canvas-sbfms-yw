@@ -1,0 +1,33 @@
+uuid: eb67ffdc-52bf-4c06-be56-8ff6a9d20fd2
+langcode: en
+status: true
+dependencies:
+  theme:
+    - drupal_cms_olivero
+active_version: bff03bd8226bcfde
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions:
+        title:
+          required: false
+          field_type: string
+          field_storage_settings: {  }
+          field_instance_settings: {  }
+          field_widget: string_textfield
+          default_value:
+            -
+              value: 'Card grid title'
+          expression: ℹ︎string␟value
+    fallback_metadata:
+      slot_definitions:
+        cards:
+          title: Cards
+          description: 'The cards for the card grid'
+          examples:
+            - '<div class="card">Card content</div>'
+label: 'Card grid'
+id: sdc.drupal_cms_olivero.card-grid
+provider: drupal_cms_olivero
+source: sdc
+source_local_id: 'drupal_cms_olivero:card-grid'

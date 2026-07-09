@@ -1,0 +1,14 @@
+uuid: d4774c7c-6fd7-48fd-a2d3-a25720d4b954
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.jr_accountant
+  module:
+    - user
+id: user_remove_role_action.jr_accountant
+label: 'Remove the Jr Accountant role from the selected user(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: jr_accountant

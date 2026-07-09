@@ -1,0 +1,7 @@
+name: acc-ledgers
+machineName: acc-ledgers
+status: true
+required: []
+props:
+  properties: []
+slots: []

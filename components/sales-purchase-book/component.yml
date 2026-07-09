@@ -1,0 +1,7 @@
+name: sales-purchase-book
+machineName: sales-purchase-book
+status: false
+required: []
+props:
+  properties: []
+slots: []

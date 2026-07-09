@@ -1,0 +1,9 @@
+name: CSV to Journal Entry
+type: module
+description: Imports CSV rows into acc_journal_entry nodes and creates missing accounting ledger entries.
+package: Custom
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:file
+  - drupal:filter
+  - drupal:node

@@ -1,0 +1,23 @@
+uuid: 3573157e-8319-4df4-9433-e870b009eaf5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_quantity_in_a_box
+    - paragraphs.paragraphs_type.sku
+id: paragraph.sku.field_quantity_in_a_box
+field_name: field_quantity_in_a_box
+entity_type: paragraph
+bundle: sku
+label: 'Quantity in a box'
+description: 'Number of Units in a box'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 1
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

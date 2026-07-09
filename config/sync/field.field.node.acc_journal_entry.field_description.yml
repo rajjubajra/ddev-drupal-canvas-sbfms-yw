@@ -1,0 +1,22 @@
+uuid: 928de891-87fb-4902-9d95-69cbe86c5da8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_description
+    - node.type.acc_journal_entry
+  module:
+    - text
+id: node.acc_journal_entry.field_description
+field_name: field_description
+entity_type: node
+bundle: acc_journal_entry
+label: Description
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

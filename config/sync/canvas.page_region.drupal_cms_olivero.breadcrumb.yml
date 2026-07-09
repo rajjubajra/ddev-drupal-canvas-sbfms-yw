@@ -1,0 +1,19 @@
+uuid: 40f744ab-b473-4190-b12c-793a540121d6
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.component.block.system_breadcrumb_block
+  theme:
+    - drupal_cms_olivero
+id: drupal_cms_olivero.breadcrumb
+region: breadcrumb
+theme: drupal_cms_olivero
+component_tree:
+  -
+    uuid: 136f9616-4250-4924-b908-4c498d3602d6
+    component_id: block.system_breadcrumb_block
+    component_version: ad6359c331fc7c45
+    inputs:
+      label: Breadcrumbs
+      label_display: '0'

@@ -1,0 +1,12 @@
+uuid: 74b1f187-b9bc-48c4-a3aa-74d901597e7c
+langcode: en
+status: true
+dependencies: {  }
+name: components
+configEntityTypeId: js_component
+weight: 0
+items:
+  - amount
+  - button
+  - page_title
+  - transaction-period

@@ -1,0 +1,23 @@
+uuid: c4e935d0-4b80-47bc-aac5-2c239bb1d0c7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_debit_amount
+    - paragraphs.paragraphs_type.debit_entry
+id: paragraph.debit_entry.field_debit_amount
+field_name: field_debit_amount
+entity_type: paragraph
+bundle: debit_entry
+label: 'Debit Amount'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0.01
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

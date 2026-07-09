@@ -1,0 +1,109 @@
+unique_field_settings:
+  customer:
+    fields:
+      title: title
+      field_customer_code: field_customer_code
+      field_tax_id: field_tax_id
+    scope: type
+    comp: each
+  stock_ledger:
+    fields: {  }
+    scope: type
+    comp: each
+  invoice:
+    fields: {  }
+    scope: type
+    comp: each
+  financial_year:
+    fields: {  }
+    scope: type
+    comp: each
+  purchase_book:
+    fields: {  }
+    scope: type
+    comp: each
+  vendor:
+    fields: {  }
+    scope: type
+    comp: each
+  accounting_ledger:
+    fields: {  }
+    scope: type
+    comp: each
+  journal_entry:
+    fields: {  }
+    scope: type
+    comp: each
+  product:
+    fields: {  }
+    scope: type
+    comp: each
+  invoice_items:
+    fields: {  }
+    scope: type
+    comp: each
+  acc_journal_entry:
+    fields: {  }
+    scope: type
+    comp: each
+  journal_import:
+    fields: {  }
+    scope: type
+    comp: each
+unique_field_taxonomy:
+  product_category:
+    fields: {  }
+    scope: vocabulary
+    comp: each
+  product_group:
+    fields: {  }
+    scope: vocabulary
+    comp: each
+  sku:
+    fields: {  }
+    scope: vocabulary
+    comp: each
+  account_types:
+    fields: {  }
+    scope: vocabulary
+    comp: each
+  product_name:
+    fields: {  }
+    scope: vocabulary
+    comp: each
+  product_company:
+    fields: {  }
+    scope: vocabulary
+    comp: each
+  product_brand:
+    fields: {  }
+    scope: vocabulary
+    comp: each
+  product_code:
+    fields: {  }
+    scope: vocabulary
+    comp: each
+  manufacturer:
+    fields: {  }
+    scope: vocabulary
+    comp: each
+  department:
+    fields: {  }
+    scope: vocabulary
+    comp: each
+  sales_department:
+    fields: {  }
+    scope: vocabulary
+    comp: each
+  task_status:
+    fields: {  }
+    scope: vocabulary
+    comp: each
+  task_priority:
+    fields: {  }
+    scope: vocabulary
+    comp: each
+  product_size:
+    fields: {  }
+    scope: vocabulary
+    comp: each

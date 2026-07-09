@@ -1,0 +1,5 @@
+name: Account Types Protect
+type: module
+description: Prevents deletion and modification of the account_types vocabulary and its taxonomy terms.
+core_version_requirement: ^9 || ^10 || ^11
+package: Custom

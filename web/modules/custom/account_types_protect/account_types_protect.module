@@ -1,0 +1,40 @@
+<?php
+
+use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityStorageException;
+
+/**
+ * Implements hook_entity_predelete().
+ */
+function account_types_protect_entity_predelete(array $entities) {
+  foreach ($entities as $entity) {
+
+    // Block deleting the vocabulary.
+    if ($entity instanceof Vocabulary && $entity->id() === 'account_types') {
+      throw new EntityStorageException('The account_types vocabulary cannot be deleted.');
+    }
+
+    // Block deleting terms inside the vocabulary.
+    if ($entity instanceof Term && $entity->bundle() === 'account_types') {
+      throw new EntityStorageException('Terms in the account_types vocabulary cannot be deleted.');
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_presave().
+ */
+function account_types_protect_entity_presave(EntityInterface $entity) {
+
+  // Block updating the vocabulary.
+  if ($entity instanceof Vocabulary && $entity->id() === 'account_types' && !$entity->isNew()) {
+    throw new EntityStorageException('The account_types vocabulary cannot be updated.');
+  }
+
+  // Block updating terms inside the vocabulary.
+  if ($entity instanceof Term && $entity->bundle() === 'account_types' && !$entity->isNew()) {
+    throw new EntityStorageException('Terms in the account_types vocabulary cannot be updated.');
+  }
+}

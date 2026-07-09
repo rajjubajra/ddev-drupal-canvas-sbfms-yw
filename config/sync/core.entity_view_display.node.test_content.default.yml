@@ -1,0 +1,28 @@
+uuid: 7811eaac-d87c-476d-80e8-e8d618d41cf8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.test_content.field_description
+    - node.type.test_content
+  module:
+    - text
+    - user
+id: node.test_content.default
+targetEntityType: node
+bundle: test_content
+mode: default
+content:
+  field_description:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

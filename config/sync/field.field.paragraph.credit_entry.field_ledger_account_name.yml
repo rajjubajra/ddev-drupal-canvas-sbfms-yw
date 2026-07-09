@@ -1,0 +1,29 @@
+uuid: 47b59e2a-974a-47ff-a364-05a5f6ae0e9a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_ledger_account_name
+    - node.type.accounting_ledger
+    - paragraphs.paragraphs_type.credit_entry
+id: paragraph.credit_entry.field_ledger_account_name
+field_name: field_ledger_account_name
+entity_type: paragraph
+bundle: credit_entry
+label: 'Ledger Account Name'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      accounting_ledger: accounting_ledger
+    sort:
+      field: title
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

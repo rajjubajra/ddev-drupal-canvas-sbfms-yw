@@ -1,0 +1,22 @@
+uuid: 69a911d2-6fb6-4199-bea7-11b1b3d4fe03
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_comment
+    - node.type.acc_journal_entry
+  module:
+    - text
+id: node.acc_journal_entry.field_comment
+field_name: field_comment
+entity_type: node
+bundle: acc_journal_entry
+label: Comment
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

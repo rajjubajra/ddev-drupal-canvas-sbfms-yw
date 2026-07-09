@@ -1,0 +1,18 @@
+uuid: e8522708-ccec-464b-a07f-4b0807fec994
+langcode: en
+status: true
+dependencies:
+  config:
+    - canvas.js_component.acc-journal-entry
+active_version: 8fe3be948e0194e1
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions: {  }
+    fallback_metadata:
+      slot_definitions: {  }
+label: acc-journal-entry
+id: js.acc-journal-entry
+provider: null
+source: js
+source_local_id: acc-journal-entry

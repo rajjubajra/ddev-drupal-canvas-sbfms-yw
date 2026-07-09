@@ -1,0 +1,20 @@
+uuid: 8be7ac16-2341-4c19-a31b-c062c5e8c1e4
+langcode: en
+status: true
+dependencies:
+  module:
+    - eck
+    - taxonomy
+id: task.field_status
+field_name: field_status
+entity_type: task
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

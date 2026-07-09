@@ -1,0 +1,23 @@
+uuid: 90eec628-d692-490a-806c-d26c553ea769
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cost_price
+    - node.type.purchase_book
+id: node.purchase_book.field_cost_price
+field_name: field_cost_price
+entity_type: node
+bundle: purchase_book
+label: 'Cost Price Per Box'
+description: 'Your purchase or production cost Per Box. For unit price <b>Cost Price</> divided by <b>Unit In a Box</b>.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0.01
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

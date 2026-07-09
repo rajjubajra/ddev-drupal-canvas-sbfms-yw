@@ -1,0 +1,10 @@
+uuid: 6433c657-a8a2-45d0-8ffc-88f2ef360ad3
+langcode: en
+status: true
+dependencies: {  }
+id: sku
+label: SKU
+icon_uuid: null
+icon_default: null
+description: 'Product SKU'
+behavior_plugins: {  }

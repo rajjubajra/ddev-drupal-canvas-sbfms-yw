@@ -1,0 +1,6 @@
+csv_to_journal_entry.form:
+  title: 'CSV to Journal Entry'
+  description: 'Import journal entries from CSV.'
+  route_name: csv_to_journal_entry.form
+  parent: system.admin_content
+  weight: 100

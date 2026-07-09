@@ -1,0 +1,8 @@
+name: Journal Import
+type: module
+description: CSV import for Journal Entries with validation and preview
+core_version_requirement: ^10 || ^11
+package: Custom
+dependencies:
+  - drupal:node
+  - drupal:file

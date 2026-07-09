@@ -1,0 +1,29 @@
+uuid: 771380c6-327d-4c59-8465-c2392ef7b5ca
+langcode: en
+status: true
+dependencies:
+  config:
+    - eck.eck_type.task.project
+    - field.storage.task.field_status
+    - taxonomy.vocabulary.task_status
+id: task.project.field_status
+field_name: field_status
+entity_type: task
+bundle: project
+label: Status
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      task_status: task_status
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

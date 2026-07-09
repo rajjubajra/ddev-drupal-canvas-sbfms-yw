@@ -1,0 +1,23 @@
+uuid: 2612f858-83a5-4574-866e-fb5afc1d5a8e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_opening_balance
+    - node.type.customer
+id: node.customer.field_opening_balance
+field_name: field_opening_balance
+entity_type: node
+bundle: customer
+label: 'Opening Balance'
+description: 'If customer already owed money.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

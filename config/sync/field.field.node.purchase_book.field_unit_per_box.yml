@@ -1,0 +1,23 @@
+uuid: 6055a2af-7035-4e13-baf6-4282e69bc0b0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_unit_per_box
+    - node.type.purchase_book
+id: node.purchase_book.field_unit_per_box
+field_name: field_unit_per_box
+entity_type: node
+bundle: purchase_book
+label: 'Unit Per Box'
+description: 'Number of units per box'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

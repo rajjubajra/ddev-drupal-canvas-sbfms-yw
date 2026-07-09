@@ -1,0 +1,29 @@
+uuid: 80b8e16b-bb86-48d6-9305-cc5225c8fc0b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_product_code
+    - node.type.purchase_book
+    - taxonomy.vocabulary.product_code
+id: node.purchase_book.field_product_code
+field_name: field_product_code
+entity_type: node
+bundle: purchase_book
+label: 'Product Code'
+description: 'Create a unique Product Code if one does not exist. You can use letters and numbers (e.g. RICE-25, PHONE-X).'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      product_code: product_code
+    sort:
+      field: name
+      direction: asc
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,0 +1,21 @@
+uuid: a00516ae-5a47-481f-b6fa-669503f695f4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_invoice_date
+    - node.type.purchase_book
+  module:
+    - datetime
+id: node.purchase_book.field_invoice_date
+field_name: field_invoice_date
+entity_type: node
+bundle: purchase_book
+label: 'Invoice Date'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

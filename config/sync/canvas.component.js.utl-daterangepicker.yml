@@ -1,0 +1,18 @@
+uuid: ec278e52-0271-4549-8593-b27c52f3f80b
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.js_component.utl-daterangepicker
+active_version: 8fe3be948e0194e1
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions: {  }
+    fallback_metadata:
+      slot_definitions: {  }
+label: utl-daterangepicker
+id: js.utl-daterangepicker
+provider: null
+source: js
+source_local_id: utl-daterangepicker

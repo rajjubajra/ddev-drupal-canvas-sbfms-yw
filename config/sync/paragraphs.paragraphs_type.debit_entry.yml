@@ -1,0 +1,10 @@
+uuid: 0b5f6caa-519c-4107-b9db-b1c1feb9a2e9
+langcode: en
+status: true
+dependencies: {  }
+id: debit_entry
+label: 'Debit Entry'
+icon_uuid: null
+icon_default: null
+description: ''
+behavior_plugins: {  }

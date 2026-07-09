@@ -1,0 +1,31 @@
+uuid: 1f3ce1b6-b71a-43b0-93e6-83a5f953a6e3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.sku.field_quantity_in_a_box
+    - field.field.paragraph.sku.field_size
+    - paragraphs.paragraphs_type.sku
+id: paragraph.sku.default
+targetEntityType: paragraph
+bundle: sku
+mode: default
+content:
+  field_quantity_in_a_box:
+    type: number
+    weight: 1
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_size:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

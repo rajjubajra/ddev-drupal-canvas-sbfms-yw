@@ -1,0 +1,19 @@
+uuid: 24ede9ea-dd53-4406-a808-2ea083dcf0d3
+langcode: en
+status: false
+dependencies:
+  config:
+    - canvas.component.block.system_powered_by_block
+  theme:
+    - drupal_cms_olivero
+id: drupal_cms_olivero.footer_bottom
+region: footer_bottom
+theme: drupal_cms_olivero
+component_tree:
+  -
+    uuid: 9e9f6484-4db2-48a1-b70a-5a08c61f7f67
+    component_id: block.system_powered_by_block
+    component_version: fcc4b9a4f6d6de35
+    inputs:
+      label: 'Powered by Drupal'
+      label_display: '0'

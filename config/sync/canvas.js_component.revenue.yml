@@ -1,0 +1,429 @@
+uuid: b9b68086-1c62-4916-b6ee-2f4a79a7a20d
+langcode: en
+status: false
+dependencies:
+  enforced:
+    config:
+      - canvas.js_component.utl-page-title
+      - canvas.js_component.utl-amount
+machineName: revenue
+name: acc-AccountTypes
+required: {  }
+props: {  }
+slots: {  }
+js:
+  original: |
+    import { useState, useEffect } from 'react';
+    import useSWR from 'swr';
+
+    import { JsonApiClient, FormattedText, Image } from 'drupal-canvas';
+
+    import { DrupalJsonApiParams } from 'drupal-jsonapi-params';
+
+
+    import PageTitle from '@/components/utl-page-title';
+    import Amount from '@/components/utl-amount';
+
+    /* --------------------------------------------------
+       Drupal JSON:API Client
+    -------------------------------------------------- */
+    const client = new JsonApiClient();
+
+    /* --------------------------------------------------
+       Helpers: current month date range
+    -------------------------------------------------- */
+    const getCurrentMonthRange = () => {
+      const now = new Date();
+
+      const year = now.getFullYear();
+      const month = now.getMonth(); // 0-based
+
+      const firstDay = new Date(year, month, 1)
+        .toISOString()
+        .split('T')[0];
+
+      const lastDay = new Date(year, month + 1, 0)
+        .toISOString()
+        .split('T')[0];
+
+      return {
+        dateFrom: firstDay,
+        dateTo: lastDay,
+      };
+    };
+
+
+
+    export default function JournalEntriesList() {
+
+
+      
+      /* --------------------------------------------------
+         State: Date Filters (default = current month)
+      -------------------------------------------------- */
+      const { dateFrom: defaultFrom, dateTo: defaultTo } =
+        getCurrentMonthRange();
+
+      const [jourId, setJourId] = useState('');
+      const [dateFrom, setDateFrom] = useState('2025-05-04');
+      const [dateTo, setDateTo] = useState('2026-05-05');
+
+
+
+
+       /* --------------------------------------------------
+         Fetch: Taxonomy Term (account_types)
+      -------------------------------------------------- */
+      const { data:accType, error:accTypeError, isLoading:accTypeIsLoading } = useSWR(
+        [
+          'taxonomy_term--account_types',
+          {
+            queryString: new DrupalJsonApiParams()
+              .getQueryString(),
+          },
+        ],
+        ([type, , , options]) => client.getCollection(type, options)
+      );
+
+      /* --------------------------------------------------
+         Fetch: Journal Entries (filtered by date range)
+      -------------------------------------------------- */
+      const { data, error, isLoading } = useSWR(
+        [
+          'node--journal_entry',
+          dateFrom,
+          dateTo,
+          {
+            queryString: new DrupalJsonApiParams()
+              .addInclude([
+                'field_credit_entry.field_ledger_account_name.field_account_type',
+                'field_debit_entry.field_ledger_account_name.field_account_type',
+              ])
+              .addFilter('field_date', dateFrom, '>=')
+              .addFilter('field_date', dateTo, '<=')
+              .addSort(['-field_date'])
+              .getQueryString(),
+          },
+        ],
+        ([type, , , options]) => client.getCollection(type, options)
+      );
+
+
+    /**----------------------------------------------
+      Debit and Credit items grouped Array
+    -------------------------------------------------**/
+      
+      const [drGrouped, setDrGrouped] = useState([])
+      const [crGrouped, setCrGrouped] = useState([])
+
+         useEffect(() => {
+    /** -----------------------------------------
+      Debit Items - Grouped by Taxnomy Term(Acount Type)
+        -----------------------------------------  **/
+              const drGrouped = accType.map((item) => ({
+                  'taxonomyId': item.id,
+                  'taxonomyName': item.name,
+                  'items': data
+                    .filter(jr=> jr.field_debit_entry.field_ledger_account_name.field_account_type.id === item.id)
+                    .map(jr => (
+                      { 
+                        'id': jr.id,
+                        'ledgerId': jr.field_debit_entry.field_ledger_account_name.id,
+                        'nodeId': jr.drupal_internal__nid,
+                        'title': jr.title,
+                        'dr_amount': jr.field_debit_entry.field_debit_amount
+                      }) )
+                }))
+           console.log('DrGrouped', drGrouped);
+           setDrGrouped(drGrouped);
+
+    /** -----------------------------------------
+      Credit Items - Grouped by Taxnomy Term(Acount Type)
+        -----------------------------------------  **/
+           const crGrouped = accType.map((item) => ({
+                  'taxonomyId': item.id,
+                  'taxonomyName': item.name,
+                  'items': data
+                    .filter(jr=> jr.field_credit_entry.field_ledger_account_name.field_account_type.id === item.id)
+                    .map(jr => (
+                      { 
+                        'id': jr.id,
+                        'nodeId': jr.drupal_internal__nid,
+                        'ledgerId': jr.field_credit_entry.field_ledger_account_name.id,
+                        'title': jr.title,
+                        'cr_amount': jr.field_credit_entry.field_credit_amount
+                      }) )
+                }))
+           console.log('crGrouped', crGrouped);
+           setCrGrouped(crGrouped);
+         },[data])
+
+
+
+
+
+
+      
+        
+      /* --------------------------------------------------
+         Render States
+      -------------------------------------------------- */
+      if (error) return 'An error has occurred.';
+      if (isLoading) return 'Loading...';
+
+      /* --------------------------------------------------
+         Render UI
+      -------------------------------------------------- */
+      return (
+        <div>
+          <PageTitle title="Account Types" dateFrom={dateFrom} dateTo={dateTo} />
+
+          <div className='text-xl uppercase'>Debit Account Types:</div>
+          { 
+             drGrouped && drGrouped.map((item) => {
+               return <div key={item.id} className='my-2 border-b border-slate-300'>
+                  <div className='text-sm font-bold uppercase grid grid-cols-2 gap-2'>
+                   
+                   <div>{item.taxonomyName}</div>
+                   <div>
+                     {
+                       item.items?.reduce((sum, i) => sum + Number(i.dr_amount || 0), 0).toFixed(2)
+                     }
+                   </div>
+                 </div>
+                 {
+                   item.items?.map(jr => {
+                     return <div key={jr.id} className='grid grid-cols-2 gap-2'> 
+                       <div><a href={`/list-journals/?nodeId=${jr.nodeId}`}>{jr.title}</a></div>
+                       <div>{jr.dr_amount}</div>
+                     </div>
+                   })
+                 }
+               </div>
+             })  
+          }
+          <div className='mt-10 text-xl'>Credit Account Types:</div>
+          {
+             crGrouped && crGrouped.map((item) => {
+               return <div key={item.id} className='my-2 border-b border-slate-300'>
+                 <div className='text-sm font-bold uppercase grid grid-cols-2 gap-2'>
+                   <div>{item.taxonomyName}</div>
+                   <div>
+                     {
+                       item.items?.reduce((sum, i) => sum + Number(i.cr_amount || 0), 0).toFixed(2)
+                     }
+                   </div>
+                 </div>
+                 {
+                   item.items?.map(jr => {
+                     return <><div key={jr.id} className='grid grid-cols-2 gap-2'>           
+                       <div><a href={`/list-journals/?nodeId=${jr.nodeId}`}>{jr.title}</a></div>
+                       <div>{jr.cr_amount}</div>
+                     </div>
+                     </>
+                   })
+                 }
+               </div>
+             })  
+          }
+          
+
+        </div>
+      );
+    }
+  compiled: |
+    import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+    import { useState, useEffect } from 'react';
+    import useSWR from 'swr';
+    import { JsonApiClient, FormattedText, Image } from 'drupal-canvas';
+    import { DrupalJsonApiParams } from 'drupal-jsonapi-params';
+    import PageTitle from '@/components/utl-page-title';
+    import Amount from '@/components/utl-amount';
+    /* --------------------------------------------------
+       Drupal JSON:API Client
+    -------------------------------------------------- */ const client = new JsonApiClient();
+    /* --------------------------------------------------
+       Helpers: current month date range
+    -------------------------------------------------- */ const getCurrentMonthRange = ()=>{
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth(); // 0-based
+        const firstDay = new Date(year, month, 1).toISOString().split('T')[0];
+        const lastDay = new Date(year, month + 1, 0).toISOString().split('T')[0];
+        return {
+            dateFrom: firstDay,
+            dateTo: lastDay
+        };
+    };
+    export default function JournalEntriesList() {
+        /* --------------------------------------------------
+         State: Date Filters (default = current month)
+      -------------------------------------------------- */ const { dateFrom: defaultFrom, dateTo: defaultTo } = getCurrentMonthRange();
+        const [jourId, setJourId] = useState('');
+        const [dateFrom, setDateFrom] = useState('2025-05-04');
+        const [dateTo, setDateTo] = useState('2026-05-05');
+        /* --------------------------------------------------
+         Fetch: Taxonomy Term (account_types)
+      -------------------------------------------------- */ const { data: accType, error: accTypeError, isLoading: accTypeIsLoading } = useSWR([
+            'taxonomy_term--account_types',
+            {
+                queryString: new DrupalJsonApiParams().getQueryString()
+            }
+        ], ([type, , , options])=>client.getCollection(type, options));
+        /* --------------------------------------------------
+         Fetch: Journal Entries (filtered by date range)
+      -------------------------------------------------- */ const { data, error, isLoading } = useSWR([
+            'node--journal_entry',
+            dateFrom,
+            dateTo,
+            {
+                queryString: new DrupalJsonApiParams().addInclude([
+                    'field_credit_entry.field_ledger_account_name.field_account_type',
+                    'field_debit_entry.field_ledger_account_name.field_account_type'
+                ]).addFilter('field_date', dateFrom, '>=').addFilter('field_date', dateTo, '<=').addSort([
+                    '-field_date'
+                ]).getQueryString()
+            }
+        ], ([type, , , options])=>client.getCollection(type, options));
+        /**----------------------------------------------
+      Debit and Credit items grouped Array
+    -------------------------------------------------**/ const [drGrouped, setDrGrouped] = useState([]);
+        const [crGrouped, setCrGrouped] = useState([]);
+        useEffect(()=>{
+            /** -----------------------------------------
+      Debit Items - Grouped by Taxnomy Term(Acount Type)
+        -----------------------------------------  **/ const drGrouped = accType.map((item)=>({
+                    'taxonomyId': item.id,
+                    'taxonomyName': item.name,
+                    'items': data.filter((jr)=>jr.field_debit_entry.field_ledger_account_name.field_account_type.id === item.id).map((jr)=>({
+                            'id': jr.id,
+                            'ledgerId': jr.field_debit_entry.field_ledger_account_name.id,
+                            'nodeId': jr.drupal_internal__nid,
+                            'title': jr.title,
+                            'dr_amount': jr.field_debit_entry.field_debit_amount
+                        }))
+                }));
+            console.log('DrGrouped', drGrouped);
+            setDrGrouped(drGrouped);
+            /** -----------------------------------------
+      Credit Items - Grouped by Taxnomy Term(Acount Type)
+        -----------------------------------------  **/ const crGrouped = accType.map((item)=>({
+                    'taxonomyId': item.id,
+                    'taxonomyName': item.name,
+                    'items': data.filter((jr)=>jr.field_credit_entry.field_ledger_account_name.field_account_type.id === item.id).map((jr)=>({
+                            'id': jr.id,
+                            'nodeId': jr.drupal_internal__nid,
+                            'ledgerId': jr.field_credit_entry.field_ledger_account_name.id,
+                            'title': jr.title,
+                            'cr_amount': jr.field_credit_entry.field_credit_amount
+                        }))
+                }));
+            console.log('crGrouped', crGrouped);
+            setCrGrouped(crGrouped);
+        }, [
+            data
+        ]);
+        /* --------------------------------------------------
+         Render States
+      -------------------------------------------------- */ if (error) return 'An error has occurred.';
+        if (isLoading) return 'Loading...';
+        /* --------------------------------------------------
+         Render UI
+      -------------------------------------------------- */ return /*#__PURE__*/ _jsxs("div", {
+            children: [
+                /*#__PURE__*/ _jsx(PageTitle, {
+                    title: "Account Types",
+                    dateFrom: dateFrom,
+                    dateTo: dateTo
+                }),
+                /*#__PURE__*/ _jsx("div", {
+                    className: "text-xl uppercase",
+                    children: "Debit Account Types:"
+                }),
+                drGrouped && drGrouped.map((item)=>{
+                    var _item_items, _item_items1;
+                    return /*#__PURE__*/ _jsxs("div", {
+                        className: "my-2 border-b border-slate-300",
+                        children: [
+                            /*#__PURE__*/ _jsxs("div", {
+                                className: "text-sm font-bold uppercase grid grid-cols-2 gap-2",
+                                children: [
+                                    /*#__PURE__*/ _jsx("div", {
+                                        children: item.taxonomyName
+                                    }),
+                                    /*#__PURE__*/ _jsx("div", {
+                                        children: (_item_items = item.items) === null || _item_items === void 0 ? void 0 : _item_items.reduce((sum, i)=>sum + Number(i.dr_amount || 0), 0).toFixed(2)
+                                    })
+                                ]
+                            }),
+                            (_item_items1 = item.items) === null || _item_items1 === void 0 ? void 0 : _item_items1.map((jr)=>{
+                                return /*#__PURE__*/ _jsxs("div", {
+                                    className: "grid grid-cols-2 gap-2",
+                                    children: [
+                                        /*#__PURE__*/ _jsx("div", {
+                                            children: /*#__PURE__*/ _jsx("a", {
+                                                href: `/list-journals/?nodeId=${jr.nodeId}`,
+                                                children: jr.title
+                                            })
+                                        }),
+                                        /*#__PURE__*/ _jsx("div", {
+                                            children: jr.dr_amount
+                                        })
+                                    ]
+                                }, jr.id);
+                            })
+                        ]
+                    }, item.id);
+                }),
+                /*#__PURE__*/ _jsx("div", {
+                    className: "mt-10 text-xl",
+                    children: "Credit Account Types:"
+                }),
+                crGrouped && crGrouped.map((item)=>{
+                    var _item_items, _item_items1;
+                    return /*#__PURE__*/ _jsxs("div", {
+                        className: "my-2 border-b border-slate-300",
+                        children: [
+                            /*#__PURE__*/ _jsxs("div", {
+                                className: "text-sm font-bold uppercase grid grid-cols-2 gap-2",
+                                children: [
+                                    /*#__PURE__*/ _jsx("div", {
+                                        children: item.taxonomyName
+                                    }),
+                                    /*#__PURE__*/ _jsx("div", {
+                                        children: (_item_items = item.items) === null || _item_items === void 0 ? void 0 : _item_items.reduce((sum, i)=>sum + Number(i.cr_amount || 0), 0).toFixed(2)
+                                    })
+                                ]
+                            }),
+                            (_item_items1 = item.items) === null || _item_items1 === void 0 ? void 0 : _item_items1.map((jr)=>{
+                                return /*#__PURE__*/ _jsx(_Fragment, {
+                                    children: /*#__PURE__*/ _jsxs("div", {
+                                        className: "grid grid-cols-2 gap-2",
+                                        children: [
+                                            /*#__PURE__*/ _jsx("div", {
+                                                children: /*#__PURE__*/ _jsx("a", {
+                                                    href: `/list-journals/?nodeId=${jr.nodeId}`,
+                                                    children: jr.title
+                                                })
+                                            }),
+                                            /*#__PURE__*/ _jsx("div", {
+                                                children: jr.cr_amount
+                                            })
+                                        ]
+                                    }, jr.id)
+                                });
+                            })
+                        ]
+                    }, item.id);
+                })
+            ]
+        });
+    }
+css:
+  original: ''
+  compiled: |
+    /*! tailwindcss v4.1.13 | MIT License | https://tailwindcss.com */
+dataDependencies:
+  drupalSettings:
+    - v0.baseUrl
+    - v0.jsonapiSettings

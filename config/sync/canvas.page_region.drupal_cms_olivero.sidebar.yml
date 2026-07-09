@@ -1,0 +1,10 @@
+uuid: 42b3ba5b-740c-489b-b1d2-411e8016e1e0
+langcode: en
+status: false
+dependencies:
+  theme:
+    - drupal_cms_olivero
+id: drupal_cms_olivero.sidebar
+region: sidebar
+theme: drupal_cms_olivero
+component_tree: {  }

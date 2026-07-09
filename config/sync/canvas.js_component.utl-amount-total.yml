@@ -1,0 +1,49 @@
+uuid: 89d750b8-5e35-43c5-abbe-f57a89192f98
+langcode: en
+status: false
+dependencies: {  }
+machineName: utl-amount-total
+name: utl-amount-total
+required: {  }
+props: {  }
+slots: {  }
+js:
+  original: |
+
+    /**
+     * 
+     * IMPORTANT NOTE: 
+     *  - DO NOT ADD MARGIN AND PADDING AT ALL 
+     *  - THIS IS JUST FOR number format
+     *  - Currency Name
+     *   
+     */
+
+    const AmountTotal = ({amt}) => {
+      return (<span className="font-bold text-blue-600"> {Number(amt).toFixed(2)}</span>);
+    };
+
+    export default AmountTotal;
+  compiled: |
+    import { jsxs as _jsxs } from "react/jsx-runtime";
+    /**
+     * 
+     * IMPORTANT NOTE: 
+     *  - DO NOT ADD MARGIN AND PADDING AT ALL 
+     *  - THIS IS JUST FOR number format
+     *  - Currency Name
+     *   
+     */ const AmountTotal = ({ amt })=>{
+        return /*#__PURE__*/ _jsxs("span", {
+            className: "font-bold text-blue-600",
+            children: [
+                " ",
+                Number(amt).toFixed(2)
+            ]
+        });
+    };
+    export default AmountTotal;
+css:
+  original: ''
+  compiled: ''
+dataDependencies: {  }

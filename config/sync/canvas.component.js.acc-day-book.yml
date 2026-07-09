@@ -1,0 +1,18 @@
+uuid: fa2ad078-f77d-4efe-beea-2159f35878f2
+langcode: en
+status: true
+dependencies:
+  config:
+    - canvas.js_component.acc-day-book
+active_version: 8fe3be948e0194e1
+versioned_properties:
+  active:
+    settings:
+      prop_field_definitions: {  }
+    fallback_metadata:
+      slot_definitions: {  }
+label: acc-day-book
+id: js.acc-day-book
+provider: null
+source: js
+source_local_id: acc-day-book
