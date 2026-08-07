@@ -20,3 +20,5 @@ $RECYCLE.BIN/
 
 # DDEV local certificates
 .ddev/traefik/certs/
+# DDEV local certificates
+.ddev/traefik/certs/
