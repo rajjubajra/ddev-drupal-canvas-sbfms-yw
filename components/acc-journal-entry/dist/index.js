@@ -27,7 +27,8 @@ export default function JournalEntry() {
     const params = new DrupalJsonApiParams().addInclude([
         'field_debit_account',
         'field_credit_account',
-        'field_image_image.field_media_image'
+        'field_image_image.field_media_image',
+        'field_image_image.field_media_document'
     ]);
     if (isReady) {
         params.addFilter('drupal_internal__nid', jourId, 'IN');
@@ -215,19 +216,32 @@ export default function JournalEntry() {
                         }),
                         /*#__PURE__*/ _jsx("div", {
                             className: "flex",
-                            children: (entry === null || entry === void 0 ? void 0 : entry.field_image_image) && (entry === null || entry === void 0 ? void 0 : (_entry_field_image_image = entry.field_image_image) === null || _entry_field_image_image === void 0 ? void 0 : _entry_field_image_image.map((img)=>{
-                                var _img_field_media_image_uri, _img_field_media_image, _img_field_media_image_uri1, _img_field_media_image1;
-                                return /*#__PURE__*/ _jsx("a", {
-                                    href: img === null || img === void 0 ? void 0 : (_img_field_media_image = img.field_media_image) === null || _img_field_media_image === void 0 ? void 0 : (_img_field_media_image_uri = _img_field_media_image.uri) === null || _img_field_media_image_uri === void 0 ? void 0 : _img_field_media_image_uri.url,
-                                    target: "_blank",
-                                    children: /*#__PURE__*/ _jsx(Image, {
-                                        className: "w-64 h-auto p-2 m-2 border border-slate-300",
-                                        src: img === null || img === void 0 ? void 0 : (_img_field_media_image1 = img.field_media_image) === null || _img_field_media_image1 === void 0 ? void 0 : (_img_field_media_image_uri1 = _img_field_media_image1.uri) === null || _img_field_media_image_uri1 === void 0 ? void 0 : _img_field_media_image_uri1.url,
-                                        alt: "supporting image",
-                                        width: 1000,
-                                        height: 500,
-                                        unoptimized: true
-                                    })
+                            children: (entry === null || entry === void 0 ? void 0 : entry.field_image_image) && (entry === null || entry === void 0 ? void 0 : (_entry_field_image_image = entry.field_image_image) === null || _entry_field_image_image === void 0 ? void 0 : _entry_field_image_image.map((img, i)=>{
+                                var _img_field_media_image_uri, _img_field_media_image, _img_field_media_image_uri1, _img_field_media_image1, _img_field_media_document_uri, _img_field_media_document;
+                                return /*#__PURE__*/ _jsxs("div", {
+                                    children: [
+                                        i + 1,
+                                        " :",
+                                        /*#__PURE__*/ _jsx("a", {
+                                            href: img === null || img === void 0 ? void 0 : (_img_field_media_image = img.field_media_image) === null || _img_field_media_image === void 0 ? void 0 : (_img_field_media_image_uri = _img_field_media_image.uri) === null || _img_field_media_image_uri === void 0 ? void 0 : _img_field_media_image_uri.url,
+                                            target: "_blank",
+                                            children: /*#__PURE__*/ _jsx(Image, {
+                                                className: "w-64 h-auto p-2 m-2 border border-slate-300",
+                                                src: img === null || img === void 0 ? void 0 : (_img_field_media_image1 = img.field_media_image) === null || _img_field_media_image1 === void 0 ? void 0 : (_img_field_media_image_uri1 = _img_field_media_image1.uri) === null || _img_field_media_image_uri1 === void 0 ? void 0 : _img_field_media_image_uri1.url,
+                                                alt: "supporting image",
+                                                width: 1000,
+                                                height: 500,
+                                                unoptimized: true
+                                            })
+                                        }),
+                                        i + 1,
+                                        " : ",
+                                        /*#__PURE__*/ _jsx("a", {
+                                            href: img === null || img === void 0 ? void 0 : (_img_field_media_document = img.field_media_document) === null || _img_field_media_document === void 0 ? void 0 : (_img_field_media_document_uri = _img_field_media_document.uri) === null || _img_field_media_document_uri === void 0 ? void 0 : _img_field_media_document_uri.url,
+                                            target: "_blank",
+                                            children: "Document"
+                                        })
+                                    ]
                                 });
                             }))
                         }),

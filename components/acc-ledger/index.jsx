@@ -49,6 +49,7 @@ export default function LedgerBook() {
             {
               queryString: new DrupalJsonApiParams()
                 .addSort(['-created'])
+                .addPageLimit(100)
                 .getQueryString(),
             },
           ],

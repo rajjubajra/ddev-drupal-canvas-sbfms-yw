@@ -9,7 +9,7 @@ import Button from '@/components/utl-button';
    Drupal JSON:API Client
 -------------------------------------------------- */ const client = new JsonApiClient();
 export default function LedgerBook() {
-    var _data_find;
+    var _data_find, _drledgerAccounts_filter, _drledgerAccounts_filter1, _crledgerAccounts_filter;
     const [ledgerId, setLedgerId] = useState('');
     useEffect(()=>{
         const params = new URLSearchParams(window.location.search);
@@ -30,7 +30,7 @@ export default function LedgerBook() {
         {
             queryString: new DrupalJsonApiParams().addSort([
                 '-created'
-            ]).getQueryString()
+            ]).addPageLimit(100).getQueryString()
         }
     ], ([type, options])=>client.getCollection(type, options));
     useEffect(()=>{
@@ -78,27 +78,28 @@ export default function LedgerBook() {
         const drArr = [];
         const crArr = [];
         journal.forEach((item)=>{
+            var _item_field_debit_account, _item_field_debit_account1, _item_field_credit_account, _item_field_debit_account2, _item_field_credit_account1, _item_field_credit_account2, _item_field_debit_account3, _item_field_credit_account3;
             drArr.push({
-                id: item.id,
-                date: item.field_date,
-                nodeId: item.drupal_internal__nid,
-                ledgerId: item.field_debit_account.id,
-                transaction: item.title,
-                ledgerName: item.field_debit_account.field_ledger_account_name,
-                creditedLedger: item.field_credit_account.field_ledger_account_name,
-                typeName: item.field_debit_account.field_ledger_account_name,
-                drAmount: item.field_amount
+                id: item === null || item === void 0 ? void 0 : item.id,
+                date: item === null || item === void 0 ? void 0 : item.field_date,
+                nodeId: item === null || item === void 0 ? void 0 : item.drupal_internal__nid,
+                ledgerId: item === null || item === void 0 ? void 0 : (_item_field_debit_account = item.field_debit_account) === null || _item_field_debit_account === void 0 ? void 0 : _item_field_debit_account.id,
+                transaction: item === null || item === void 0 ? void 0 : item.title,
+                ledgerName: item === null || item === void 0 ? void 0 : (_item_field_debit_account1 = item.field_debit_account) === null || _item_field_debit_account1 === void 0 ? void 0 : _item_field_debit_account1.field_ledger_account_name,
+                creditedLedger: item === null || item === void 0 ? void 0 : (_item_field_credit_account = item.field_credit_account) === null || _item_field_credit_account === void 0 ? void 0 : _item_field_credit_account.field_ledger_account_name,
+                typeName: item === null || item === void 0 ? void 0 : (_item_field_debit_account2 = item.field_debit_account) === null || _item_field_debit_account2 === void 0 ? void 0 : _item_field_debit_account2.field_ledger_account_name,
+                drAmount: item === null || item === void 0 ? void 0 : item.field_amount
             });
             crArr.push({
-                id: item.id,
-                date: item.field_date,
-                nodeId: item.drupal_internal__nid,
-                ledgerId: item.field_credit_account.id,
-                transaction: item.title,
-                ledgerName: item.field_credit_account.field_ledger_account_name,
-                debitedLedger: item.field_debit_account.field_ledger_account_name,
-                typeName: item.field_credit_account.field_ledger_account_name,
-                crAmount: item.field_amount
+                id: item === null || item === void 0 ? void 0 : item.id,
+                date: item === null || item === void 0 ? void 0 : item.field_date,
+                nodeId: item === null || item === void 0 ? void 0 : item.drupal_internal__nid,
+                ledgerId: item === null || item === void 0 ? void 0 : (_item_field_credit_account1 = item.field_credit_account) === null || _item_field_credit_account1 === void 0 ? void 0 : _item_field_credit_account1.id,
+                transaction: item === null || item === void 0 ? void 0 : item.title,
+                ledgerName: item === null || item === void 0 ? void 0 : (_item_field_credit_account2 = item.field_credit_account) === null || _item_field_credit_account2 === void 0 ? void 0 : _item_field_credit_account2.field_ledger_account_name,
+                debitedLedger: item === null || item === void 0 ? void 0 : (_item_field_debit_account3 = item.field_debit_account) === null || _item_field_debit_account3 === void 0 ? void 0 : _item_field_debit_account3.field_ledger_account_name,
+                typeName: item === null || item === void 0 ? void 0 : (_item_field_credit_account3 = item.field_credit_account) === null || _item_field_credit_account3 === void 0 ? void 0 : _item_field_credit_account3.field_ledger_account_name,
+                crAmount: item === null || item === void 0 ? void 0 : item.field_amount
             });
         });
         setDrLedgerAccounts(drArr);
@@ -171,7 +172,7 @@ export default function LedgerBook() {
                     /*#__PURE__*/ _jsx("div", {
                         className: "flex justify-between",
                         children: /*#__PURE__*/ _jsx(PageTitle, {
-                            title: (_data_find = data.find((i)=>i.id === ledgerId)) === null || _data_find === void 0 ? void 0 : _data_find.title,
+                            title: data === null || data === void 0 ? void 0 : (_data_find = data.find((i)=>i.id === ledgerId)) === null || _data_find === void 0 ? void 0 : _data_find.title,
                             dateFrom: dateFrom,
                             dateTo: dateTo
                         })
@@ -198,25 +199,25 @@ export default function LedgerBook() {
                                             })
                                         ]
                                     }),
-                                    drledgerAccounts.filter((i)=>i.ledgerId === ledgerId).map((item)=>/*#__PURE__*/ _jsxs("div", {
+                                    drledgerAccounts === null || drledgerAccounts === void 0 ? void 0 : (_drledgerAccounts_filter = drledgerAccounts.filter((i)=>i.ledgerId === ledgerId)) === null || _drledgerAccounts_filter === void 0 ? void 0 : _drledgerAccounts_filter.map((item)=>/*#__PURE__*/ _jsxs("div", {
                                             className: "flex gap-2",
                                             children: [
                                                 /*#__PURE__*/ _jsx("div", {
                                                     className: "w-24",
-                                                    children: item.date
+                                                    children: item === null || item === void 0 ? void 0 : item.date
                                                 }),
                                                 /*#__PURE__*/ _jsx("div", {
                                                     className: "w-64",
                                                     children: /*#__PURE__*/ _jsxs("a", {
-                                                        href: `/acc-journal-entry/?nodeId=${item.nodeId}`,
+                                                        href: `/acc-journal-entry/?nodeId=${item === null || item === void 0 ? void 0 : item.nodeId}`,
                                                         children: [
-                                                            item.transaction,
+                                                            item === null || item === void 0 ? void 0 : item.transaction,
                                                             /*#__PURE__*/ _jsx("br", {}),
                                                             /*#__PURE__*/ _jsxs("span", {
                                                                 className: "text-xs relative -top-2",
                                                                 children: [
                                                                     "cr : ",
-                                                                    item.creditedLedger
+                                                                    item === null || item === void 0 ? void 0 : item.creditedLedger
                                                                 ]
                                                             })
                                                         ]
@@ -224,10 +225,10 @@ export default function LedgerBook() {
                                                 }),
                                                 /*#__PURE__*/ _jsx("div", {
                                                     className: "w-24 text-right",
-                                                    children: item.drAmount
+                                                    children: item === null || item === void 0 ? void 0 : item.drAmount
                                                 })
                                             ]
-                                        }, item.id))
+                                        }, item === null || item === void 0 ? void 0 : item.id))
                                 ]
                             }),
                             /*#__PURE__*/ _jsxs("div", {
@@ -254,20 +255,20 @@ export default function LedgerBook() {
                                             children: [
                                                 /*#__PURE__*/ _jsx("div", {
                                                     className: "w-24",
-                                                    children: item.date
+                                                    children: item === null || item === void 0 ? void 0 : item.date
                                                 }),
                                                 /*#__PURE__*/ _jsx("div", {
                                                     className: "w-64",
                                                     children: /*#__PURE__*/ _jsxs("a", {
-                                                        href: `/acc-journal-entry/?nodeId=${item.nodeId}`,
+                                                        href: `/acc-journal-entry/?nodeId=${item === null || item === void 0 ? void 0 : item.nodeId}`,
                                                         children: [
-                                                            item.transaction,
+                                                            item === null || item === void 0 ? void 0 : item.transaction,
                                                             /*#__PURE__*/ _jsx("br", {}),
                                                             /*#__PURE__*/ _jsxs("span", {
                                                                 className: "text-xs relative -top-2",
                                                                 children: [
                                                                     "dr : ",
-                                                                    item.debitedLedger
+                                                                    item === null || item === void 0 ? void 0 : item.debitedLedger
                                                                 ]
                                                             })
                                                         ]
@@ -275,10 +276,10 @@ export default function LedgerBook() {
                                                 }),
                                                 /*#__PURE__*/ _jsx("div", {
                                                     className: "w-24 text-right",
-                                                    children: item.crAmount
+                                                    children: item === null || item === void 0 ? void 0 : item.crAmount
                                                 })
                                             ]
-                                        }, item.id))
+                                        }, item === null || item === void 0 ? void 0 : item.id))
                                 ]
                             })
                         ]
@@ -293,7 +294,7 @@ export default function LedgerBook() {
                                         children: "Debit Total"
                                     }),
                                     /*#__PURE__*/ _jsx("div", {
-                                        children: drledgerAccounts.filter((i)=>i.ledgerId === ledgerId).reduce((sum, i)=>sum + Number(i.drAmount || 0), 0).toFixed(2)
+                                        children: drledgerAccounts === null || drledgerAccounts === void 0 ? void 0 : (_drledgerAccounts_filter1 = drledgerAccounts.filter((i)=>i.ledgerId === ledgerId)) === null || _drledgerAccounts_filter1 === void 0 ? void 0 : _drledgerAccounts_filter1.reduce((sum, i)=>sum + Number((i === null || i === void 0 ? void 0 : i.drAmount) || 0), 0).toFixed(2)
                                     })
                                 ]
                             }),
@@ -304,7 +305,7 @@ export default function LedgerBook() {
                                         children: "Credit Total"
                                     }),
                                     /*#__PURE__*/ _jsx("div", {
-                                        children: crledgerAccounts.filter((i)=>i.ledgerId === ledgerId).reduce((sum, i)=>sum + Number(i.crAmount || 0), 0).toFixed(2)
+                                        children: crledgerAccounts === null || crledgerAccounts === void 0 ? void 0 : (_crledgerAccounts_filter = crledgerAccounts.filter((i)=>(i === null || i === void 0 ? void 0 : i.ledgerId) === ledgerId)) === null || _crledgerAccounts_filter === void 0 ? void 0 : _crledgerAccounts_filter.reduce((sum, i)=>sum + Number((i === null || i === void 0 ? void 0 : i.crAmount) || 0), 0).toFixed(2)
                                     })
                                 ]
                             })

@@ -46,6 +46,7 @@ export default function JournalEntry() {
         'field_debit_account',
         'field_credit_account',
         'field_image_image.field_media_image',
+        'field_image_image.field_media_document',
       ]);
     
    
@@ -204,8 +205,9 @@ export default function JournalEntry() {
 {/** IMAGE : SECTION */}
           <div className='flex'>
             { entry?.field_image_image &&
-              entry?.field_image_image?.map((img) => 
-            <a href={img?.field_media_image?.uri?.url} target='_blank'>
+              entry?.field_image_image?.map((img, i) =>     
+            <div>    
+            {i + 1 } :<a href={img?.field_media_image?.uri?.url} target='_blank'>
               <Image
                className='w-64 h-auto p-2 m-2 border border-slate-300'
                src={img?.field_media_image?.uri?.url}
@@ -214,6 +216,11 @@ export default function JournalEntry() {
                height={500}
                unoptimized />
             </a>
+            
+            {i+1} : <a href={img?.field_media_document?.uri?.url} target='_blank'>
+              Document
+            </a>
+            </div>
             )
             }
           </div>

@@ -31,7 +31,7 @@ export default function LedgersList() {
     ([type, options]) => client.getCollection(type, options)
   );
 
-  
+  console.log('Ledger Accounts Data:', data);
   
   if (error) return 'An error has occurred.';
   if (isLoading) return 'Loading...';

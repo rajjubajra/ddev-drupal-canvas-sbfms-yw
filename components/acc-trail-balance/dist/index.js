@@ -46,7 +46,7 @@ export default function TrialBalance() {
         {
             queryString: new DrupalJsonApiParams().addInclude([
                 'field_account_type'
-            ]).getQueryString()
+            ]).addPageLimit(100).getQueryString()
         }
     ], ([type, options])=>client.getCollection(type, options));
     /* --------------------------------------------------
